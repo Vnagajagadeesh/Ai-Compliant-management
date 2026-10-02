@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SmartCampus AI — Smarter Complaints. Faster Resolution. Better Campus.</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563EB'/><path d='M30 55 L50 30 L70 55 L62 55 L62 70 L38 70 L38 55 Z' fill='white'/><circle cx='50' cy='60' r='5' fill='%23A5B4FC'/></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','system-ui','sans-serif'], display: ['Plus Jakarta Sans','Inter','sans-serif'] },
+      colors: {
+        navy: { 900:'#0B152E', 800:'#0F1F3D', 700:'#1E2A4A', 600:'#334155', 500:'#475569' },
+        brand: { 50:'#EFF6FF',100:'#DBEAFE',200:'#BFDBFE',300:'#93C5FD',400:'#60A5FA',500:'#3B82F6',600:'#2563EB',700:'#1D4ED8' },
+        violet2: {500:'#8B5CF6',600:'#7C3AED'},
+        soft: '#F6F8FB'
+      },
+      boxShadow: {
+        card: '0 1px 3px rgba(15,31,61,0.06), 0 8px 24px -8px rgba(15,31,61,0.10)',
+        cardhover: '0 4px 12px rgba(15,31,61,0.08), 0 16px 40px -12px rgba(37,99,235,0.18)',
+        glow: '0 0 0 4px rgba(37,99,235,0.12)'
+      },
+      borderRadius: { '2xl2':'20px' }
+    }
+  }
+}
+</script>
+<style>
+*{-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:#F6F8FB;color:#0F1F3D;font-family:'Inter',sans-serif;overflow-x:hidden}
+h1,h2,h3,.display{font-family:'Plus Jakarta Sans','Inter',sans-serif;letter-spacing:-0.02em}
+::selection{background:#2563EB;color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#EEF2F7}
+::-webkit-scrollbar-thumb{background:#C3CFE2;border-radius:99px;border:2px solid #EEF2F7}
+::-webkit-scrollbar-thumb:hover{background:#94A3B8}
+.grad-text{background:linear-gradient(92deg,#2563EB 10%,#7C3AED 55%,#2563EB 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad-bg{background:linear-gradient(135deg,#2563EB 0%,#4F46E5 45%,#7C3AED 100%)}
+.grad-soft{background:linear-gradient(135deg,#EFF6FF 0%,#F5F3FF 60%,#EFF6FF 100%)}
+.grid-pattern{background-image:radial-gradient(circle at 1px 1px, rgba(37,99,235,0.12) 1px, transparent 0);background-size:28px 28px}
+.card{background:#fff;border:1px solid #E6EBF3;border-radius:20px;box-shadow:0 1px 3px rgba(15,31,61,.05),0 10px 30px -12px rgba(15,31,61,.10);transition:all .25s ease}
+.card-hover:hover{transform:translateY(-4px);box-shadow:0 4px 12px rgba(15,31,61,.07),0 20px 44px -14px rgba(37,99,235,.22);border-color:#CBD8F5}
+.btn-primary{background:linear-gradient(135deg,#2563EB,#4F46E5);color:#fff;box-shadow:0 8px 20px -6px rgba(37,99,235,.5),inset 0 1px 0 rgba(255,255,255,.2);transition:all .2s}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 28px -6px rgba(37,99,235,.6)}
+.btn-primary:active{transform:translateY(0)}
+.btn-ghost{border:1px solid #E2E8F0;background:#fff;transition:all .2s}
+.btn-ghost:hover{border-color:#2563EB;color:#2563EB;background:#EFF6FF}
+.chip{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.reveal{opacity:0;transform:translateY(28px);transition:all .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.floaty{animation:floaty 5s ease-in-out infinite}
+.floaty2{animation:floaty 7s ease-in-out infinite}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+.pulse-dot{animation:pulseDot 1.6s ease-in-out infinite}
+@keyframes scanMove{0%{top:0;opacity:0}15%{opacity:1}85%{opacity:1}100%{top:calc(100% - 2px);opacity:0}}
+.scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2563EB,#8B5CF6,transparent);box-shadow:0 0 16px rgba(37,99,235,.6);animation:scanMove 1.8s ease-in-out infinite}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.shimmer{background:linear-gradient(90deg,#EDF1F7 25%,#F8FAFC 50%,#EDF1F7 75%);background-size:800px 100%;animation:shimmer 1.4s linear infinite}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+.typing span{width:7px;height:7px;border-radius:99px;background:#2563EB;display:inline-block;margin-right:4px;animation:typing 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-slide{animation:fadeSlideIn .4s ease both}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
+.marquee-track:hover{animation-play-state:paused}
+.sidebar-link{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;font-size:14px;font-weight:600;color:#475569;transition:all .18s;border:1px solid transparent;cursor:pointer;white-space:nowrap}
+.sidebar-link:hover{background:#F1F5F9;color:#0F1F3D}
+.sidebar-link.active{background:linear-gradient(135deg,#EFF6FF,#F5F3FF);color:#1D4ED8;border-color:#DBEAFE;box-shadow:0 4px 12px -4px rgba(37,99,235,.25)}
+.status-dot{width:8px;height:8px;border-radius:99px;display:inline-block}
+.timeline-line{position:absolute;left:19px;top:40px;bottom:-8px;width:2px;background:#E2E8F0}
+.timeline-item:last-child .timeline-line{display:none}
+input,textarea,select{outline:none}
+input:focus,textarea:focus,select:focus{border-color:#2563EB!important;box-shadow:0 0 0 4px rgba(37,99,235,.10)!important}
+.tab-btn{transition:all .2s}
+.table-row-hover:hover{background:#F8FAFF!important}
+.drawer{transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.modal-bg{backdrop-filter:blur(6px)}
+.star{cursor:pointer;transition:transform .15s}
+.star:hover{transform:scale(1.2)}
+.progress-bar{height:8px;background:#EEF2F7;border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#2563EB,#8B5CF6);transition:width 1s cubic-bezier(.16,1,.3,1)}
+.kanban-col{min-width:280px}
+.toast-in{animation:fadeSlideIn .35s cubic-bezier(.16,1,.3,1) both}
+.heat-cell{transition:all .2s;cursor:default}
+.heat-cell:hover{transform:scale(1.05);z-index:2;box-shadow:0 8px 20px -6px rgba(0,0,0,.25)}
+.ai-step{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;background:#F8FAFC;border:1px solid #EDF1F7;font-size:13px;font-weight:600;color:#475569}
+.ai-step.done{background:#F0FDF4;border-color:#BBF7D0;color:#15803D}
+.ai-step.active{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8}
+.toggle{width:44px;height:24px;border-radius:99px;background:#CBD5E1;position:relative;cursor:pointer;transition:all .2s;flex-shrink:0}
+.toggle.on{background:linear-gradient(135deg,#2563EB,#7C3AED)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:99px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:all .2s}
+.toggle.on::after{left:23px}
+.cmd-kbd{font-size:11px;background:#F1F5F9;border:1px solid #E2E8F0;border-bottom-width:2px;border-radius:6px;padding:1px 7px;font-weight:700;color:#64748B}
+.hero-blob{position:absolute;border-radius:9999px;filter:blur(90px);opacity:.5;pointer-events:none}
+@media(max-width:1024px){.sidebar-desktop{display:none}}
+.stat-num{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<!-- ============ TOASTS ============ -->
+<div id="toasts" class="fixed top-5 right-5 z-[200] flex flex-col gap-3 w-[340px] max-w-[calc(100vw-40px)]"></div>
+
+<!-- ============ COMMAND PALETTE ============ -->
+<div id="cmdPalette" class="fixed inset-0 z-[150] hidden">
+  <div class="absolute inset-0 bg-navy-900/50 modal-bg" onclick="toggleCmd(false)"></div>
+  <div class="relative max-w-xl mx-auto mt-24 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden fade-slide">
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-100">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="cmdInput" oninput="cmdSearch(this.value)" placeholder="Search complaints, departments, actions... (Esc to close)" class="flex-1 text-sm font-medium !border-0 !shadow-none !p-0"/>
+      <span class="cmd-kbd">ESC</span>
+    </div>
+    <div id="cmdResults" class="max-h-[320px] overflow-y-auto p-2"></div>
+  </div>
+</div>
+
+<!-- ================================================= LANDING VIEW ================================================= -->
+<div id="landingView">
+  <!-- Announcement -->
+  <div class="grad-bg text-white text-center text-[13px] font-semibold py-2.5 px-4 relative overflow-hidden">
+    <span class="relative z-10">✦ NEW — SmartCampus AI 2.0 with GPT-grade triage, duplicate detection & SLA prediction <a href="#" onclick="goAuth('student');return false;" class="underline underline-offset-2 ml-2 font-bold">Try live demo →</a></span>
+  </div>
+
+  <!-- Header -->
+  <header id="mainHeader" class="sticky top-0 z-50 bg-white/85 backdrop-blur-xl border-b border-slate-200/70 transition-all">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <div class="w-10 h-10 rounded-xl grad-bg flex items-center justify-center shadow-lg shadow-blue-500/25">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3 2 8.5 12 14 22 8.5 12 3Z" fill="white"/><path d="M6 11.5V16c0 1.5 2.7 3.5 6 3.5s6-2 6-3.5v-4.5L12 14 6 11.5Z" fill="white" opacity=".85"/><circle cx="17.5" cy="17.5" r="3.2" fill="#A5B4FC" stroke="white" stroke-width="1.5"/><path d="M17.5 16.2v2.6M16.2 17.5h2.6" stroke="#1D4ED8" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="font-display font-800 font-extrabold text-[17px] leading-none text-navy-900">SmartCampus <span class="grad-text">AI</span></div>
+          <div class="text-[10.5px] font-bold tracking-[0.14em] text-slate-400 uppercase mt-0.5">Complaint Cloud</div>
+        </div>
+      </div>
+      <nav class="hidden lg:flex items-center gap-8 text-[14px] font-semibold text-slate-600">
+        <a href="#ai-engine" class="hover:text-brand-600 transition">AI Engine</a>
+        <a href="#roles" class="hover:text-brand-600 transition">Roles</a>
+        <a href="#departments" class="hover:text-brand-600 transition">Departments</a>
+        <a href="#workflow" class="hover:text-brand-600 transition">Workflow</a>
+        <a href="#testimonials" class="hover:text-brand-600 transition">Customers</a>
+        <a href="#faq" class="hover:text-brand-600 transition">FAQ</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <button onclick="toggleCmd(true)" class="hidden md:flex items-center gap-2 text-[13px] font-semibold text-slate-500 border border-slate-200 rounded-xl px-3.5 py-2 hover:border-brand-300 hover:text-brand-600 transition bg-white">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Search <span class="cmd-kbd">⌘K</span>
+        </button>
+        <button onclick="goAuth('student')" class="hidden sm:block text-[14px] font-bold text-navy-800 hover:text-brand-600 transition px-3 py-2">Sign in</button>
+        <button onclick="goAuth('student')" class="btn-primary text-[14px] font-bold rounded-xl px-5 py-2.5">Get Started Free</button>
+        <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="lg:hidden p-2 rounded-lg border border-slate-200">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F1F3D" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="hidden lg:hidden border-t border-slate-100 bg-white px-5 py-4 flex flex-col gap-1 text-[15px] font-semibold text-slate-700">
+      <a href="#ai-engine" class="py-2.5 border-b border-slate-50">AI Engine</a>
+      <a href="#roles" class="py-2.5 border-b border-slate-50">Roles</a>
+      <a href="#departments" class="py-2.5 border-b border-slate-50">Departments</a>
+      <a href="#workflow" class="py-2.5 border-b border-slate-50">Workflow</a>
+      <a href="#faq" class="py-2.5">FAQ</a>
+      <button onclick="goAuth('student')" class="btn-primary rounded-xl py-3 mt-2 font-bold">Sign in / Get Started</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden">
+    <div class="hero-blob w-[560px] h-[560px] bg-blue-200 -top-40 -left-40"></div>
+    <div class="hero-blob w-[520px] h-[520px] bg-violet-200 top-10 -right-40"></div>
+    <div class="absolute inset-0 grid-pattern opacity-60 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent)]"></div>
+    <div class="relative max-w-7xl mx-auto px-5 lg:px-8 pt-14 lg:pt-20 pb-14 grid lg:grid-cols-2 gap-12 items-center">
+      <div class="reveal visible">
+        <div class="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-full pl-1.5 pr-4 py-1.5 shadow-sm text-[12.5px] font-bold text-slate-700">
+          <span class="grad-bg text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1"><span class="w-1.5 h-1.5 bg-white rounded-full pulse-dot"></span> AI LIVE</span>
+          Trusted by 40+ universities & 180K students
+        </div>
+        <h1 class="display font-extrabold text-[42px] sm:text-[56px] lg:text-[62px] leading-[1.04] mt-6 text-navy-900">Smarter Complaints.<br/><span class="grad-text">Faster Resolution.</span><br/>Better Campus.</h1>
+        <p class="text-slate-500 text-[16.5px] leading-relaxed mt-6 max-w-xl">SmartCampus AI automatically <b class="text-navy-800">categorizes, prioritizes, routes & summarizes</b> every student complaint — detects duplicates, predicts urgency, and guides staff to resolution <b class="text-navy-800">3.4× faster</b>.</p>
+        <div class="flex flex-wrap gap-3 mt-8">
+          <button onclick="goAuth('student')" class="btn-primary rounded-xl px-7 py-3.5 font-bold text-[15px] flex items-center gap-2">File a Complaint
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+          </button>
+          <button onclick="document.getElementById('liveDemo').scrollIntoView({behavior:'smooth'})" class="btn-ghost rounded-xl px-7 py-3.5 font-bold text-[15px] flex items-center gap-2 text-navy-800">
+            <span class="w-8 h-8 rounded-full grad-soft border border-brand-100 flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="#2563EB"><path d="M8 5v14l11-7z"/></svg></span> Watch AI in action
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-x-8 gap-y-4 mt-9">
+          <div><div class="stat-num font-display font-extrabold text-2xl text-navy-900"><span class="counter" data-target="94">0</span>%</div><div class="text-[12.5px] font-semibold text-slate-500">AI routing accuracy</div></div>
+          <div class="w-px bg-slate-200 hidden sm:block"></div>
+          <div><div class="stat-num font-display font-extrabold text-2xl text-navy-900"><span class="counter" data-target="68">0</span>%</div><div class="text-[12.5px] font-semibold text-slate-500">Faster resolution</div></div>
+          <div class="w-px bg-slate-200 hidden sm:block"></div>
+          <div><div class="stat-num font-display font-extrabold text-2xl text-navy-900"><span class="counter" data-target="32">0</span>K+</div><div class="text-[12.5px] font-semibold text-slate-500">Issues resolved</div></div>
+          <div class="w-px bg-slate-200 hidden sm:block"></div>
+          <div><div class="stat-num font-display font-extrabold text-2xl text-navy-900">4.8<span class="text-amber-400">★</span></div><div class="text-[12.5px] font-semibold text-slate-500">Student satisfaction</div></div>
+        </div>
+      </div>
+
+      <!-- Hero visual -->
+      <div class="relative reveal visible">
+        <div class="card p-0 overflow-hidden !rounded-3xl shadow-2xl">
+          <div class="flex items-center gap-2 px-5 py-3.5 border-b border-slate-100 bg-slate-50/60">
+            <span class="w-3 h-3 rounded-full bg-rose-400"></span><span class="w-3 h-3 rounded-full bg-amber-400"></span><span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+            <div class="ml-3 flex-1 bg-white border border-slate-200 rounded-lg text-[12px] font-semibold text-slate-400 px-3 py-1.5 flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> app.smartcampus.ai/student/new-complaint</div>
+            <span class="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-1 flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-emerald-500 rounded-full pulse-dot"></span> AI ONLINE</span>
+          </div>
+          <div class="p-5 bg-white">
+            <div class="flex items-center justify-between mb-3">
+              <div class="font-display font-bold text-[15px]">New Complaint</div>
+              <div class="text-[11px] font-bold text-brand-600 bg-brand-50 border border-brand-100 rounded-full px-2.5 py-1">✦ AI ASSISTED</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-[13.5px] text-slate-700 leading-relaxed">"There is <b>no power in Block C, Room 304</b>. The lights and fans stopped working last night and there is a <b>burning smell from the switchboard</b>. Please help urgently."</div>
+            <div class="relative mt-4 rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50/80 to-violet-50/60 p-4 overflow-hidden">
+              <div class="scan-line"></div>
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-7 h-7 rounded-lg grad-bg flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <span class="font-display font-bold text-[13.5px]">AI Analysis Complete</span>
+                <span class="ml-auto text-[11px] font-extrabold text-emerald-600">98% confident</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-[12px]">
+                <div class="bg-white rounded-xl p-2.5 border border-slate-200"><div class="text-slate-400 font-bold text-[10px] uppercase tracking-wide">Category</div><div class="font-bold text-navy-900">⚡ Electrical</div></div>
+                <div class="bg-white rounded-xl p-2.5 border border-rose-200"><div class="text-slate-400 font-bold text-[10px] uppercase tracking-wide">Urgency</div><div class="font-bold text-rose-600">● Critical</div></div>
+                <div class="bg-white rounded-xl p-2.5 border border-slate-200"><div class="text-slate-400 font-bold text-[10px] uppercase tracking-wide">Department</div><div class="font-bold text-navy-900">Electrical Maint.</div></div>
+                <div class="bg-white rounded-xl p-2.5 border border-slate-200"><div class="text-slate-400 font-bold text-[10px] uppercase tracking-wide">ETA</div><div class="font-bold text-navy-900">~6 hours</div></div>
+              </div>
+              <div class="mt-2.5 bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-[12px] font-semibold text-amber-800 flex items-center gap-2">⚠ 2 similar complaints detected in Block C — possible linked outage</div>
+            </div>
+          </div>
+        </div>
+        <div class="floaty absolute -left-4 lg:-left-10 top-16 bg-white rounded-2xl shadow-xl border border-slate-200 px-4 py-3 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <div><div class="text-[13px] font-extrabold">CMP-2026-118 resolved</div><div class="text-[11.5px] text-slate-500 font-semibold">WiFi restored • 2h 14m</div></div>
+        </div>
+        <div class="floaty2 absolute -right-3 lg:-right-8 bottom-10 bg-white rounded-2xl shadow-xl border border-slate-200 px-4 py-3 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-violet-50 flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></div>
+          <div><div class="text-[13px] font-extrabold">SLA prediction: On track</div><div class="text-[11.5px] text-slate-500 font-semibold">AI forecasts 94% on-time</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logos -->
+    <div class="relative border-y border-slate-200/80 bg-white/70 backdrop-blur py-5">
+      <div class="max-w-7xl mx-auto px-5 overflow-hidden" style="mask-image:linear-gradient(90deg,transparent,black 8%,black 92%,transparent)">
+        <div class="marquee-track gap-14 text-[14px] font-extrabold text-slate-400 tracking-wide">
+          <span>◆ NORTHBRIDGE UNIVERSITY</span><span>◆ ST. AURELIUS INSTITUTE</span><span>◆ WESTFIELD TECH</span><span>◆ GREENWICH STATE</span><span>◆ LAKEMONT COLLEGE</span><span>◆ RIVERDALE IIT CAMPUS</span><span>◆ NORTHBRIDGE UNIVERSITY</span><span>◆ ST. AURELIUS INSTITUTE</span><span>◆ WESTFIELD TECH</span><span>◆ GREENWICH STATE</span><span>◆ LAKEMONT COLLEGE</span><span>◆ RIVERDALE IIT CAMPUS</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI ENGINE -->
+  <section id="ai-engine" class="max-w-7xl mx-auto px-5 lg:px-8 py-20">
+    <div class="text-center max-w-2xl mx-auto reveal">
+      <div class="chip text-brand-600 bg-brand-50 border border-brand-100 inline-block px-4 py-1.5 rounded-full">The AI Engine</div>
+      <h2 class="display font-extrabold text-[34px] sm:text-[44px] mt-4 text-navy-900">Every complaint, <span class="grad-text">understood in seconds</span></h2>
+      <p class="text-slate-500 mt-4 text-[16px]">Our NLP pipeline reads natural language, extracts intent, and orchestrates the entire resolution workflow — no manual triage needed.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
+      <div class="card card-hover p-6 reveal"><div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div><h3 class="font-bold text-[17px]">Smart Categorization</h3><p class="text-slate-500 text-[14px] mt-2 leading-relaxed">Classifies into 12+ categories — Electrical, Plumbing, WiFi, Hostel, Security & more with 94% accuracy.</p><div class="mt-4 flex flex-wrap gap-2"><span class="text-[11px] font-bold bg-slate-100 rounded-full px-2.5 py-1">Electrical</span><span class="text-[11px] font-bold bg-slate-100 rounded-full px-2.5 py-1">Plumbing</span><span class="text-[11px] font-bold bg-slate-100 rounded-full px-2.5 py-1">+10 more</span></div></div>
+      <div class="card card-hover p-6 reveal"><div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center mb-4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div><h3 class="font-bold text-[17px]">Urgency Detection</h3><p class="text-slate-500 text-[14px] mt-2 leading-relaxed">Detects safety-critical language — fire, shock, flooding, outages — and auto-escalates to Critical priority.</p><div class="mt-4 progress-bar"><div class="progress-fill" style="width:92%"></div></div><div class="text-[11.5px] font-bold text-slate-500 mt-1.5">Critical recall — 98.2%</div></div>
+      <div class="card card-hover p-6 reveal"><div class="w-12 h-12 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center mb-4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9l2.2 2.2m9.8 9.8 2.2 2.2m0-14.2-2.2 2.2M7.1 16.9l-2.2 2.2"/></svg></div><h3 class="font-bold text-[17px]">Auto Department Routing</h3><p class="text-slate-500 text-[14px] mt-2 leading-relaxed">Routes to the correct department & officer instantly based on category, building, and workload balancing.</p><div class="mt-4 text-[12px] font-bold text-violet-700 bg-violet-50 border border-violet-100 rounded-lg px-3 py-2">→ Electrical Maintenance • R. Verma (load: 4)</div></div>
+      <div class="card card-hover p-6 reveal"><div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg></div><h3 class="font-bold text-[17px]">Duplicate Detection</h3><p class="text-slate-500 text-[14px] mt-2 leading-relaxed">Semantic similarity engine merges repeat reports of the same issue — cutting ticket volume by up to 31%.</p><div class="mt-4 flex items-center gap-2 text-[12px] font-bold text-amber-700"><span class="w-2 h-2 bg-amber-500 rounded-full pulse-dot"></span> 3 duplicates merged this week</div></div>
+      <div class="card card-hover p-6 reveal"><div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h10M4 18h7"/></svg></div><h3 class="font-bold text-[17px]">Instant Summarization</h3><p class="text-slate-500 text-[14px] mt-2 leading-relaxed">Generates crisp TL;DR summaries, key entities & suggested next actions so staff grasp issues in seconds.</p><div class="mt-4 bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-[12px] text-slate-600 italic">"Power outage, Block C-304, burning smell — inspect switchboard ASAP."</div></div>
+      <div class="card card-hover p-6 reveal"><div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><h3 class="font-bold text-[17px]">SLA & Sentiment Prediction</h3><p class="text-slate-500 text-[14px] mt-2 leading-relaxed">Forecasts resolution time, breach risk, and student sentiment to help admins intervene proactively.</p><div class="mt-4 flex gap-2"><span class="text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2.5 py-1">ETA 6h</span><span class="text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-2.5 py-1">Sentiment: Urgent</span></div></div>
+    </div>
+  </section>
+
+  <!-- LIVE DEMO -->
+  <section id="liveDemo" class="bg-navy-900 relative overflow-hidden">
+    <div class="hero-blob w-[500px] h-[500px] bg-blue-600/40 -top-40 left-1/4"></div>
+    <div class="hero-blob w-[400px] h-[400px] bg-violet-600/40 bottom-0 -right-20"></div>
+    <div class="relative max-w-7xl mx-auto px-5 lg:px-8 py-20 grid lg:grid-cols-2 gap-12 items-center">
+      <div class="reveal">
+        <div class="chip text-blue-300 bg-white/10 border border-white/15 inline-block px-4 py-1.5 rounded-full">✦ Interactive Demo</div>
+        <h2 class="display font-extrabold text-white text-[32px] sm:text-[42px] mt-4 leading-tight">Try the AI triage.<br/>Right here, right now.</h2>
+        <p class="text-slate-300 mt-4 text-[15.5px] leading-relaxed">Type any campus complaint in plain words — broken tap, dead WiFi, messy corridor — and watch SmartCampus AI categorize, prioritize and route it live.</p>
+        <div class="flex flex-wrap gap-2 mt-6">
+          <button onclick="setDemoText(0)" class="text-[12.5px] font-bold text-slate-200 bg-white/10 hover:bg-white/20 border border-white/15 rounded-full px-4 py-2 transition">⚡ Power outage in hostel</button>
+          <button onclick="setDemoText(1)" class="text-[12.5px] font-bold text-slate-200 bg-white/10 hover:bg-white/20 border border-white/15 rounded-full px-4 py-2 transition">💧 Water leakage washroom</button>
+          <button onclick="setDemoText(2)" class="text-[12.5px] font-bold text-slate-200 bg-white/10 hover:bg-white/20 border border-white/15 rounded-full px-4 py-2 transition">📶 WiFi dead in library</button>
+        </div>
+      </div>
+      <div class="reveal bg-white rounded-3xl p-6 shadow-2xl">
+        <div class="flex items-center gap-2 mb-3"><div class="w-8 h-8 rounded-xl grad-bg flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Z"/></svg></div><span class="font-display font-bold">AI Triage Playground</span><span class="ml-auto text-[11px] font-extrabold text-emerald-600 bg-emerald-50 rounded-full px-2.5 py-1">LIVE MODEL</span></div>
+        <textarea id="demoInput" rows="3" class="w-full border border-slate-200 rounded-xl p-3.5 text-[14px] font-medium resize-none" placeholder="e.g. The ceiling fan in Room 204, Girls Hostel B is making loud noise and wobbling dangerously...">The WiFi in Central Library 2nd floor has been completely down since morning. None of us can access the portal for assignment submissions due today.</textarea>
+        <button onclick="runLandingDemo()" id="demoBtn" class="btn-primary w-full rounded-xl py-3.5 font-bold text-[14.5px] mt-3">✦ Analyze with AI</button>
+        <div id="demoOutput" class="mt-4 hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section id="roles" class="max-w-7xl mx-auto px-5 lg:px-8 py-20">
+    <div class="text-center reveal"><div class="chip text-violet-600 bg-violet-50 border border-violet-100 inline-block px-4 py-1.5 rounded-full">Built for everyone</div>
+      <h2 class="display font-extrabold text-[34px] sm:text-[44px] mt-4">One platform. <span class="grad-text">Three powerful roles.</span></h2></div>
+    <div class="grid md:grid-cols-3 gap-5 mt-12">
+      <div class="card card-hover p-0 overflow-hidden reveal">
+        <div class="h-2 grad-bg"></div>
+        <div class="p-7">
+          <div class="w-14 h-14 rounded-2xl grad-soft border border-brand-100 flex items-center justify-center text-2xl font-bold"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg></div>
+          <h3 class="font-display font-extrabold text-[20px] mt-4">Students</h3>
+          <p class="text-slate-500 text-[14px] mt-1">File in 30 seconds. Track everything.</p>
+          <ul class="mt-5 space-y-3 text-[14px] font-medium text-slate-700">
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> AI-assisted complaint form with live analysis</li>
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> Real-time tracking timeline + notifications</li>
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> Duplicate warnings before you submit</li>
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> Rate resolution & give feedback</li>
+          </ul>
+          <button onclick="goAuth('student')" class="w-full mt-6 btn-ghost rounded-xl py-3 font-bold text-[14px]">Enter Student Portal →</button>
+        </div>
+      </div>
+      <div class="card card-hover p-0 overflow-hidden reveal ring-2 ring-brand-500/20">
+        <div class="h-2 grad-bg"></div>
+        <div class="p-7">
+          <div class="flex items-center justify-between"><div class="w-14 h-14 rounded-2xl grad-soft border border-brand-100 flex items-center justify-center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div><span class="text-[11px] font-extrabold text-white grad-bg rounded-full px-3 py-1">MOST LOVED</span></div>
+          <h3 class="font-display font-extrabold text-[20px] mt-4">Staff & Officers</h3>
+          <p class="text-slate-500 text-[14px] mt-1">Clear queues. Zero guesswork.</p>
+          <ul class="mt-5 space-y-3 text-[14px] font-medium text-slate-700">
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> Priority-sorted smart inbox + urgent queue</li>
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> AI summaries & one-click reply drafts</li>
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> Assign, escalate & track SLA in one click</li>
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> Workload & performance insights</li>
+          </ul>
+          <button onclick="goAuth('staff')" class="w-full mt-6 btn-primary rounded-xl py-3 font-bold text-[14px]">Enter Staff Console →</button>
+        </div>
+      </div>
+      <div class="card card-hover p-0 overflow-hidden reveal">
+        <div class="h-2 grad-bg"></div>
+        <div class="p-7">
+          <div class="w-14 h-14 rounded-2xl grad-soft border border-brand-100 flex items-center justify-center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+          <h3 class="font-display font-extrabold text-[20px] mt-4">Administrators</h3>
+          <p class="text-slate-500 text-[14px] mt-1">Campus-wide command center.</p>
+          <ul class="mt-5 space-y-3 text-[14px] font-medium text-slate-700">
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> Live analytics, trends & heatmaps</li>
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> Department SLA & performance scores</li>
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> AI insights & anomaly alerts</li>
+            <li class="flex gap-2.5"><span class="text-emerald-500 font-bold">✓</span> Reports, users & audit logs</li>
+          </ul>
+          <button onclick="goAuth('admin')" class="w-full mt-6 btn-ghost rounded-xl py-3 font-bold text-[14px]">Enter Admin Suite →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPARTMENTS -->
+  <section id="departments" class="bg-white border-y border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-20">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 reveal">
+        <div><div class="chip text-brand-600 bg-brand-50 border border-brand-100 inline-block px-4 py-1.5 rounded-full">Coverage</div>
+        <h2 class="display font-extrabold text-[32px] sm:text-[40px] mt-4">Every department.<br/><span class="grad-text">Perfectly orchestrated.</span></h2></div>
+        <p class="text-slate-500 max-w-md text-[15px]">AI routes each complaint to the right team with full context — average routing time under 4 seconds.</p>
+      </div>
+      <div id="deptGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-10"></div>
+    </div>
+  </section>
+
+  <!-- WORKFLOW -->
+  <section id="workflow" class="max-w-7xl mx-auto px-5 lg:px-8 py-20">
+    <div class="text-center reveal"><div class="chip text-emerald-600 bg-emerald-50 border border-emerald-100 inline-block px-4 py-1.5 rounded-full">How it works</div>
+    <h2 class="display font-extrabold text-[34px] sm:text-[44px] mt-4">From complaint to <span class="grad-text">resolved in 4 steps</span></h2></div>
+    <div class="grid md:grid-cols-4 gap-5 mt-12">
+      <div class="card p-6 relative reveal"><div class="absolute top-5 right-6 font-display font-extrabold text-[40px] text-slate-100">01</div><div class="w-11 h-11 rounded-xl grad-bg text-white font-extrabold flex items-center justify-center">✎</div><h3 class="font-bold text-[16px] mt-4">Student submits</h3><p class="text-slate-500 text-[13.5px] mt-2">Describe the issue naturally. AI analyzes live as you type.</p></div>
+      <div class="card p-6 relative reveal"><div class="absolute top-5 right-6 font-display font-extrabold text-[40px] text-slate-100">02</div><div class="w-11 h-11 rounded-xl grad-bg text-white font-extrabold flex items-center justify-center">✦</div><h3 class="font-bold text-[16px] mt-4">AI triages instantly</h3><p class="text-slate-500 text-[13.5px] mt-2">Category, urgency, department, duplicates & ETA in seconds.</p></div>
+      <div class="card p-6 relative reveal"><div class="absolute top-5 right-6 font-display font-extrabold text-[40px] text-slate-100">03</div><div class="w-11 h-11 rounded-xl grad-bg text-white font-extrabold flex items-center justify-center">⚙</div><h3 class="font-bold text-[16px] mt-4">Staff resolves</h3><p class="text-slate-500 text-[13.5px] mt-2">Officer gets AI summary + draft reply. Updates status live.</p></div>
+      <div class="card p-6 relative reveal"><div class="absolute top-5 right-6 font-display font-extrabold text-[40px] text-slate-100">04</div><div class="w-11 h-11 rounded-xl grad-bg text-white font-extrabold flex items-center justify-center">★</div><h3 class="font-bold text-[16px] mt-4">Student verifies</h3><p class="text-slate-500 text-[13.5px] mt-2">Track progress, confirm resolution & rate the experience.</p></div>
+    </div>
+    <div class="card mt-8 p-6 lg:p-8 grid lg:grid-cols-3 gap-6 items-center grad-soft !border-brand-100 reveal">
+      <div class="lg:col-span-2"><h3 class="font-display font-extrabold text-[22px]">Resolution time dropped from 6.2 days → 1.9 days</h3><p class="text-slate-600 text-[14.5px] mt-2">Average across pilot universities after 90 days of SmartCampus AI deployment. Duplicate reports down 31%. Student satisfaction up 2.1×.</p></div>
+      <div class="flex gap-3"><button onclick="goAuth('admin')" class="btn-primary rounded-xl px-6 py-3.5 font-bold text-[14px] flex-1">View Admin Analytics</button></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="bg-white border-y border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-20">
+      <div class="text-center reveal"><div class="chip text-amber-600 bg-amber-50 border border-amber-100 inline-block px-4 py-1.5 rounded-full">Loved on campus</div>
+      <h2 class="display font-extrabold text-[32px] sm:text-[40px] mt-4">What campuses <span class="grad-text">say about us</span></h2></div>
+      <div class="grid md:grid-cols-3 gap-5 mt-10">
+        <div class="card card-hover p-6 reveal"><div class="text-amber-400 font-bold tracking-widest">★★★★★</div><p class="text-slate-700 text-[14.5px] mt-3 leading-relaxed">"Earlier my hostel complaints vanished into a register. Now I file in seconds, AI routes it instantly, and I get updates till it's fixed. Genuinely magical."</p><div class="flex items-center gap-3 mt-5"><img src="https://i.pravatar.cc/80?img=47" class="w-10 h-10 rounded-full" alt=""/><div><div class="font-bold text-[14px]">Ananya Iyer</div><div class="text-[12px] text-slate-500 font-semibold">Student, CSE • Northbridge Univ.</div></div></div></div>
+        <div class="card card-hover p-6 reveal"><div class="text-amber-400 font-bold tracking-widest">★★★★★</div><p class="text-slate-700 text-[14.5px] mt-3 leading-relaxed">"The AI summaries alone save my team 2 hours daily. Urgent electrical issues now reach us in seconds instead of days. SLA compliance hit 96%."</p><div class="flex items-center gap-3 mt-5"><img src="https://i.pravatar.cc/80?img=12" class="w-10 h-10 rounded-full" alt=""/><div><div class="font-bold text-[14px]">Rahul Verma</div><div class="text-[12px] text-slate-500 font-semibold">Electrical Officer • Westfield Tech</div></div></div></div>
+        <div class="card card-hover p-6 reveal"><div class="text-amber-400 font-bold tracking-widest">★★★★★</div><p class="text-slate-700 text-[14.5px] mt-3 leading-relaxed">"For the first time I can see the entire campus health on one screen — heatmaps, repeat issues, department scores. Board meetings write themselves."</p><div class="flex items-center gap-3 mt-5"><img src="https://i.pravatar.cc/80?img=32" class="w-10 h-10 rounded-full" alt=""/><div><div class="font-bold text-[14px]">Dr. Meera Nair</div><div class="text-[12px] text-slate-500 font-semibold">Dean of Operations • St. Aurelius</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="max-w-3xl mx-auto px-5 py-20">
+    <div class="text-center reveal"><h2 class="display font-extrabold text-[32px]">Frequently asked questions</h2><p class="text-slate-500 mt-2 text-[15px]">Everything you need to know about SmartCampus AI.</p></div>
+    <div id="faqList" class="mt-8 space-y-3"></div>
+  </section>
+
+  <!-- CTA -->
+  <section class="max-w-7xl mx-auto px-5 lg:px-8 pb-20">
+    <div class="grad-bg rounded-[28px] p-10 lg:p-16 text-center relative overflow-hidden reveal">
+      <div class="absolute inset-0 grid-pattern opacity-20" style="background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.35) 1px, transparent 0)"></div>
+      <div class="relative"><h2 class="display font-extrabold text-white text-[30px] sm:text-[44px] leading-tight">Ready for a smarter campus?</h2><p class="text-blue-100 mt-3 text-[16px] max-w-xl mx-auto">Join 40+ universities resolving issues 3× faster. Set up in a day. Free pilot for your campus.</p>
+      <div class="flex flex-wrap justify-center gap-3 mt-8">
+        <button onclick="goAuth('student')" class="bg-white text-brand-700 rounded-xl px-8 py-3.5 font-extrabold text-[15px] hover:shadow-xl transition">Start Free Pilot</button>
+        <button onclick="goAuth('admin')" class="border-2 border-white/40 text-white rounded-xl px-8 py-3.5 font-bold text-[15px] hover:bg-white/10 transition">Explore Admin Demo</button>
+      </div>
+      <div class="text-blue-200 text-[12.5px] font-semibold mt-5">No credit card • Onboard in 24h • SSO & ERP integrations included</div></div>
+    </div>
+  </section>
+
+  <footer class="bg-navy-900 text-slate-300">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 py-14 grid md:grid-cols-4 gap-10">
+      <div><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl grad-bg flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3 2 8.5 12 14 22 8.5 12 3Z" fill="white"/><path d="M6 11.5V16c0 1.5 2.7 3.5 6 3.5s6-2 6-3.5v-4.5L12 14 6 11.5Z" fill="white" opacity=".85"/></svg></div><div class="font-display font-extrabold text-white text-[17px]">SmartCampus <span class="grad-text">AI</span></div></div><p class="text-[13.5px] mt-4 leading-relaxed text-slate-400">Smarter Complaints. Faster Resolution. Better Campus. The AI-native service desk for modern universities.</p><div class="flex gap-2 mt-5"><span class="text-[11px] font-bold bg-white/10 rounded-full px-3 py-1.5">SOC 2</span><span class="text-[11px] font-bold bg-white/10 rounded-full px-3 py-1.5">GDPR</span><span class="text-[11px] font-bold bg-white/10 rounded-full px-3 py-1.5">ISO 27001</span></div></div>
+      <div><div class="font-bold text-white text-[14px] mb-4">Product</div><div class="space-y-2.5 text-[13.5px] font-medium"><a href="#ai-engine" class="block hover:text-white">AI Engine</a><a href="#roles" class="block hover:text-white">Student Portal</a><a href="#roles" class="block hover:text-white">Staff Console</a><a href="#roles" class="block hover:text-white">Admin Suite</a><a href="#" class="block hover:text-white">Integrations</a></div></div>
+      <div><div class="font-bold text-white text-[14px] mb-4">Company</div><div class="space-y-2.5 text-[13.5px] font-medium"><a href="#" class="block hover:text-white">About us</a><a href="#testimonials" class="block hover:text-white">Customers</a><a href="#" class="block hover:text-white">Careers</a><a href="#" class="block hover:text-white">Press kit</a><a href="#" class="block hover:text-white">Contact</a></div></div>
+      <div><div class="font-bold text-white text-[14px] mb-4">Stay updated</div><p class="text-[13px] text-slate-400">Campus ops insights, monthly.</p><div class="flex gap-2 mt-3"><input id="nlEmail" placeholder="you@university.edu" class="flex-1 bg-white/10 border border-white/15 rounded-xl px-3.5 py-2.5 text-[13px] text-white placeholder:text-slate-500"/><button onclick="subscribeNL()" class="grad-bg text-white rounded-xl px-4 font-bold text-[13px]">Join</button></div></div>
+    </div>
+    <div class="border-t border-white/10"><div class="max-w-7xl mx-auto px-5 lg:px-8 py-5 flex flex-col sm:flex-row justify-between gap-2 text-[12.5px] text-slate-500 font-medium"><span>© 2026 SmartCampus AI Inc. All rights reserved.</span><span>Privacy • Terms • Status: <span class="text-emerald-400 font-bold">● All systems operational</span></span></div></div>
+  </footer>
+</div>
+
+<!-- ================================================= AUTH VIEW ================================================= -->
+<div id="authView" class="hidden min-h-screen grid lg:grid-cols-2">
+  <div class="hidden lg:flex flex-col justify-between grad-bg p-12 text-white relative overflow-hidden">
+    <div class="absolute inset-0 grid-pattern opacity-20" style="background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.3) 1px, transparent 0)"></div>
+    <div class="relative flex items-center gap-3 cursor-pointer" onclick="goLanding()"><div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3 2 8.5 12 14 22 8.5 12 3Z" fill="white"/><path d="M6 11.5V16c0 1.5 2.7 3.5 6 3.5s6-2 6-3.5v-4.5L12 14 6 11.5Z" fill="white" opacity=".85"/></svg></div><div class="font-display font-extrabold text-[18px]">SmartCampus AI</div></div>
+    <div class="relative">
+      <h2 class="display font-extrabold text-[38px] leading-tight">One login.<br/>Entire campus, resolved.</h2>
+      <div class="mt-8 space-y-4">
+        <div class="flex items-center gap-3 bg-white/10 backdrop-blur rounded-2xl p-4 border border-white/15"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center font-bold text-brand-600">✦</div><div><div class="font-bold text-[14px]">AI triage in under 4 seconds</div><div class="text-blue-100 text-[12.5px]">Auto-category, urgency & routing</div></div></div>
+        <div class="flex items-center gap-3 bg-white/10 backdrop-blur rounded-2xl p-4 border border-white/15"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center font-bold text-emerald-600">✓</div><div><div class="font-bold text-[14px]">68% faster resolutions</div><div class="text-blue-100 text-[12.5px]">Verified across 40+ campuses</div></div></div>
+      </div>
+      <div class="mt-8 bg-white rounded-2xl p-5 text-navy-900"><p class="text-[14px] italic leading-relaxed">"SmartCampus AI transformed how our 12,000 students reach us. Complaint chaos → calm command center."</p><div class="flex items-center gap-3 mt-3"><img src="https://i.pravatar.cc/60?img=32" class="w-9 h-9 rounded-full"/><div><div class="font-bold text-[13px]">Dr. Meera Nair</div><div class="text-[12px] text-slate-500">Dean of Operations</div></div><div class="ml-auto text-amber-400 text-[13px]">★★★★★</div></div></div>
+    </div>
+    <div class="relative text-blue-200 text-[12.5px]">© 2026 SmartCampus AI • SOC 2 Type II Certified</div>
+  </div>
+  <div class="flex items-center justify-center p-6 sm:p-12 bg-soft">
+    <div class="w-full max-w-[460px]">
+      <button onclick="goLanding()" class="lg:hidden flex items-center gap-2 mb-6"><div class="w-9 h-9 rounded-xl grad-bg flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3 2 8.5 12 14 22 8.5 12 3Z" fill="white"/></svg></div><span class="font-display font-extrabold">SmartCampus AI</span></button>
+      <h2 class="display font-extrabold text-[30px]">Welcome back</h2>
+      <p class="text-slate-500 text-[14.5px] mt-1">Sign in to your campus workspace. Choose a demo role:</p>
+      <div class="grid grid-cols-3 gap-2.5 mt-6" id="rolePicker">
+        <button onclick="pickRole('student')" data-role="student" class="role-card border-2 rounded-2xl p-3.5 text-left transition bg-white"><div class="text-[22px]">🎓</div><div class="font-extrabold text-[13.5px] mt-1">Student</div><div class="text-[11.5px] text-slate-500 font-semibold">File & track</div></button>
+        <button onclick="pickRole('staff')" data-role="staff" class="role-card border-2 rounded-2xl p-3.5 text-left transition bg-white"><div class="text-[22px]">🛠️</div><div class="font-extrabold text-[13.5px] mt-1">Staff</div><div class="text-[11.5px] text-slate-500 font-semibold">Resolve queue</div></button>
+        <button onclick="pickRole('admin')" data-role="admin" class="role-card border-2 rounded-2xl p-3.5 text-left transition bg-white"><div class="text-[22px]">📊</div><div class="font-extrabold text-[13.5px] mt-1">Admin</div><div class="text-[11.5px] text-slate-500 font-semibold">Analytics</div></button>
+      </div>
+      <div class="card p-6 mt-4">
+        <label class="text-[12.5px] font-bold text-slate-600">University Email</label>
+        <input id="authEmail" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium mt-1.5" value="aarav.sharma@northbridge.edu"/>
+        <label class="text-[12.5px] font-bold text-slate-600 mt-4 block">Password</label>
+        <input id="authPass" type="password" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium mt-1.5" value="demo-password"/>
+        <div class="flex items-center justify-between mt-3 text-[12.5px] font-semibold"><label class="flex items-center gap-2 text-slate-600"><input type="checkbox" checked class="accent-blue-600 w-4 h-4"/> Remember me</label><a href="#" class="text-brand-600">Forgot password?</a></div>
+        <button onclick="doLogin()" id="loginBtn" class="btn-primary w-full rounded-xl py-3.5 font-bold text-[15px] mt-5">Sign in Securely →</button>
+        <div class="flex items-center gap-3 my-4"><div class="flex-1 h-px bg-slate-200"></div><span class="text-[11.5px] font-bold text-slate-400">OR ONE-CLICK DEMO</span><div class="flex-1 h-px bg-slate-200"></div></div>
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="quickLogin('student')" class="btn-ghost rounded-xl py-2.5 text-[12.5px] font-bold">🎓 Student</button>
+          <button onclick="quickLogin('staff')" class="btn-ghost rounded-xl py-2.5 text-[12.5px] font-bold">🛠️ Staff</button>
+          <button onclick="quickLogin('admin')" class="btn-ghost rounded-xl py-2.5 text-[12.5px] font-bold">📊 Admin</button>
+        </div>
+      </div>
+      <p class="text-center text-[12.5px] text-slate-500 font-medium mt-5">Protected by SSO, MFA & end-to-end encryption. <a href="#" class="text-brand-600 font-bold">Learn more</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================= DASHBOARD SHELL ================================================= -->
+<div id="dashView" class="hidden min-h-screen">
+  <div class="flex min-h-screen">
+    <!-- Sidebar desktop -->
+    <aside class="sidebar-desktop w-[264px] shrink-0 bg-white border-r border-slate-200/80 flex-col fixed inset-y-0 left-0 z-40 hidden lg:flex">
+      <div class="h-[72px] flex items-center gap-3 px-5 border-b border-slate-100 cursor-pointer" onclick="goLanding()">
+        <div class="w-10 h-10 rounded-xl grad-bg flex items-center justify-center shadow-lg shadow-blue-500/20"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3 2 8.5 12 14 22 8.5 12 3Z" fill="white"/><path d="M6 11.5V16c0 1.5 2.7 3.5 6 3.5s6-2 6-3.5v-4.5L12 14 6 11.5Z" fill="white" opacity=".85"/></svg></div>
+        <div><div class="font-display font-extrabold text-[16px] leading-none">SmartCampus <span class="grad-text">AI</span></div><div id="roleLabelSide" class="text-[10.5px] font-bold tracking-[0.12em] text-slate-400 uppercase mt-1">Student Portal</div></div>
+      </div>
+      <div class="flex-1 overflow-y-auto p-4 space-y-1" id="sidebarNav"></div>
+      <div class="p-4">
+        <div class="rounded-2xl grad-soft border border-brand-100 p-4">
+          <div class="flex items-center gap-2 text-[13px] font-extrabold"><span class="w-2 h-2 bg-emerald-500 rounded-full pulse-dot"></span> AI Engine Active</div>
+          <div class="text-[12px] text-slate-500 font-medium mt-1">Triage accuracy <b class="text-navy-900">94.2%</b> this week</div>
+          <div class="progress-bar mt-2.5"><div class="progress-fill" style="width:94%"></div></div>
+        </div>
+        <div class="flex items-center gap-3 mt-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer" onclick="logout()">
+          <img id="sideAvatar" src="https://i.pravatar.cc/60?img=13" class="w-9 h-9 rounded-full ring-2 ring-brand-100"/>
+          <div class="flex-1 min-w-0"><div id="sideName" class="font-bold text-[13.5px] truncate">Aarav Sharma</div><div class="text-[11.5px] text-slate-500 font-semibold">Sign out →</div></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 lg:ml-[264px] min-w-0">
+      <!-- Topbar -->
+      <header class="sticky top-0 z-30 bg-white/85 backdrop-blur-xl border-b border-slate-200/70">
+        <div class="flex items-center gap-3 px-4 sm:px-6 lg:px-8 h-[72px]">
+          <button onclick="document.getElementById('mobileSidebar').classList.remove('-translate-x-full')" class="lg:hidden p-2.5 rounded-xl border border-slate-200"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F1F3D" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+          <button onclick="toggleCmd(true)" class="hidden md:flex items-center gap-2.5 bg-slate-100/80 hover:bg-slate-100 border border-transparent rounded-xl px-4 py-2.5 text-[13.5px] font-semibold text-slate-500 w-[300px] transition">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Search complaints... <span class="cmd-kbd ml-auto">⌘K</span>
+          </button>
+          <button onclick="setTab('new')" id="topNewBtn" class="md:hidden btn-primary rounded-xl px-4 py-2.5 text-[13px] font-bold">+ New</button>
+          <div class="ml-auto flex items-center gap-2.5">
+            <button onclick="setTab('new')" id="topNewBtn2" class="hidden md:flex btn-primary rounded-xl px-5 py-2.5 text-[13.5px] font-bold items-center gap-2"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg> New Complaint</button>
+            <div class="relative">
+              <button onclick="document.getElementById('notifDrop').classList.toggle('hidden')" class="relative p-2.5 rounded-xl border border-slate-200 hover:border-brand-300 hover:bg-brand-50 transition">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+                <span id="notifCount" class="absolute -top-1.5 -right-1.5 w-5 h-5 grad-bg text-white text-[10px] font-extrabold rounded-full flex items-center justify-center">4</span>
+              </button>
+              <div id="notifDrop" class="hidden absolute right-0 mt-2 w-[340px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50">
+                <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between"><span class="font-display font-bold text-[14px]">Notifications</span><button class="text-[12px] font-bold text-brand-600" onclick="markAllRead()">Mark all read</button></div>
+                <div id="notifList" class="max-h-[340px] overflow-y-auto divide-y divide-slate-50"></div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2.5 pl-1">
+              <img id="topAvatar" src="https://i.pravatar.cc/60?img=13" class="w-9 h-9 rounded-full ring-2 ring-brand-100"/>
+              <div class="hidden sm:block"><div id="topName" class="font-bold text-[13.5px] leading-none">Aarav Sharma</div><div id="topRole" class="text-[11.5px] text-slate-500 font-semibold mt-1">Student • CSE</div></div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Mobile sidebar -->
+      <div id="mobileSidebar" class="fixed inset-0 z-50 lg:hidden -translate-x-full transition-transform duration-300">
+        <div class="absolute inset-0 bg-navy-900/50" onclick="document.getElementById('mobileSidebar').classList.add('-translate-x-full')"></div>
+        <div class="relative w-[280px] h-full bg-white flex flex-col">
+          <div class="h-[72px] flex items-center gap-3 px-5 border-b border-slate-100"><div class="w-9 h-9 rounded-xl grad-bg flex items-center justify-center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3 2 8.5 12 14 22 8.5 12 3Z" fill="white"/></svg></div><div class="font-display font-extrabold">SmartCampus AI</div></div>
+          <div class="flex-1 overflow-y-auto p-4 space-y-1" id="sidebarNavMobile"></div>
+          <div class="p-4 border-t border-slate-100"><button onclick="logout()" class="w-full btn-ghost rounded-xl py-3 font-bold text-[14px]">Sign out</button></div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <main id="dashContent" class="p-4 sm:p-6 lg:p-8 max-w-[1280px] mx-auto"></main>
+    </div>
+  </div>
+</div>
+
+<!-- ============ COMPLAINT DETAIL DRAWER ============ -->
+<div id="detailOverlay" class="fixed inset-0 z-[100] hidden">
+  <div class="absolute inset-0 bg-navy-900/50 modal-bg" onclick="closeDetail()"></div>
+  <div id="detailPanel" class="drawer absolute right-0 top-0 bottom-0 w-full max-w-[560px] bg-soft shadow-2xl translate-x-full overflow-y-auto">
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- ============ CONFIRM MODAL ============ -->
+<div id="confirmModal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-navy-900/55 modal-bg" onclick="closeConfirm()"></div>
+  <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-[520px] overflow-hidden fade-slide">
+    <div id="confirmContent"></div>
+  </div>
+</div>
+
+<script>
+/* ==================================================================
+   SmartCampus AI — Application Logic
+================================================================== */
+// ---------- Icons ----------
+const IC = {
+  grid:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  plus:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
+  list:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+  track:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  star:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3 6.6 7 1-5 5 1.2 7L12 18.3 5.8 21.6 7 14.6l-5-5 7-1 3-6.6Z"/></svg>',
+  inbox:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"/></svg>',
+  chart:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>',
+  dept:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/></svg>',
+  users:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>',
+  bell:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+  gear:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>',
+  spark:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Z"/></svg>'
+};
+
+// ---------- Seed Data ----------
+const DEPARTMENTS = [
+  {name:'Electrical Maintenance', short:'Electrical', open:18, sla:96, load:'Normal', color:'#F59E0B', icon:'⚡'},
+  {name:'Plumbing & Water', short:'Plumbing', open:12, sla:93, load:'Normal', color:'#0EA5E9', icon:'💧'},
+  {name:'IT & Network Services', short:'IT / Network', open:22, sla:91, load:'High', color:'#6366F1', icon:'📶'},
+  {name:'Housekeeping', short:'Housekeeping', open:15, sla:97, load:'Normal', color:'#10B981', icon:'🧹'},
+  {name:'Hostel Office', short:'Hostel', open:9, sla:89, load:'Normal', color:'#8B5CF6', icon:'🏠'},
+  {name:'Campus Security', short:'Security', open:5, sla:99, load:'Low', color:'#EF4444', icon:'🛡️'},
+  {name:'Transport Cell', short:'Transport', open:7, sla:94, load:'Low', color:'#14B8A6', icon:'🚌'},
+  {name:'Central Library', short:'Library', open:4, sla:98, load:'Low', color:'#F97316', icon:'📚'},
+  {name:'Food & Canteen', short:'Canteen', open:11, sla:90, load:'High', color:'#EC4899', icon:'🍽️'},
+  {name:'Civil & Infrastructure', short:'Civil', open:14, sla:88, load:'High', color:'#78716C', icon:'🏗️'},
+];
+
+function seedComplaints(){
+  return [
+    {id:'CMP-2026-0142', title:'No power in Block C Room 304, burning smell from switchboard', desc:'There is no power in Block C, Room 304 since last night. Lights and fans stopped working and there is a burning smell coming from the switchboard near the door. This feels unsafe, please send someone urgently.', category:'Electrical', department:'Electrical Maintenance', building:'Block C — Room 304', status:'In Progress', priority:'Critical', date:'2026-10-01 21:40', updated:'2h ago', student:'Aarav Sharma', sid:'STU-2023-1847', assignee:'Rahul Verma', upvotes:14, aiSummary:'Power outage in Block C-304 with burning smell from switchboard — likely short-circuit. Immediate inspection required.', aiConf:98, sentiment:'Urgent', eta:'~6 hours', feedback:null, timeline:[['Submitted','2026-10-01 21:40','AI triaged as Critical • Electrical • routed to Electrical Maintenance'],['Under Review','2026-10-01 21:44','Auto-assigned to Rahul Verma (nearest available officer)'],['In Progress','2026-10-02 08:15','Technician dispatched. Switchboard isolated, replacement in progress.']]},
+    {id:'CMP-2026-0141', title:'WiFi completely down on Central Library 2nd floor', desc:'The WiFi in Central Library 2nd floor has been completely down since morning. None of us can access the portal for assignment submissions due today. Tried reconnecting multiple devices.', category:'Network & WiFi', department:'IT & Network Services', building:'Central Library — Floor 2', status:'Assigned', priority:'High', date:'2026-10-02 09:05', updated:'3h ago', student:'Aarav Sharma', sid:'STU-2023-1847', assignee:'Priya Nair', upvotes:23, aiSummary:'Complete WiFi outage on Library Floor 2 blocking assignment submissions. Likely AP/controller failure.', aiConf:95, sentiment:'Frustrated', eta:'~4 hours', feedback:null, timeline:[['Submitted','2026-10-02 09:05','AI triaged as High • Network & WiFi • routed to IT & Network'],['Assigned','2026-10-02 09:31','Assigned to Priya Nair. 6 related reports merged.']]},
+    {id:'CMP-2026-0138', title:'Water leakage from washroom ceiling in Boys Hostel B', desc:'Continuous water leakage from the washroom ceiling on the 2nd floor of Boys Hostel B. Water is spreading into the corridor and it is becoming slippery and unsafe to walk.', category:'Plumbing', department:'Plumbing & Water', building:'Boys Hostel B — Floor 2', status:'Under Review', priority:'High', date:'2026-10-01 14:20', updated:'20h ago', student:'Aarav Sharma', sid:'STU-2023-1847', assignee:'Suresh Kumar', upvotes:9, aiSummary:'Active ceiling leak in Hostel B washroom spreading to corridor — slip hazard. Requires plumbing inspection.', aiConf:93, sentiment:'Concerned', eta:'~1 day', feedback:null, timeline:[['Submitted','2026-10-01 14:20','AI triaged as High • Plumbing • routed to Plumbing & Water'],['Under Review','2026-10-01 16:02','Site photos requested. Officer reviewing.']]},
+    {id:'CMP-2026-0135', title:'Canteen food quality declined, found foreign object in meal', desc:'Found a small piece of plastic in the lunch thali at the main canteen today. Several students also complained about stale food this week. Needs hygiene inspection.', category:'Food & Canteen', department:'Food & Canteen', building:'Main Canteen', status:'Escalated', priority:'High', date:'2026-09-30 13:10', updated:'1d ago', student:'Sneha Patel', sid:'STU-2024-0921', assignee:'Kavita Rao', upvotes:41, aiSummary:'Food safety incident at Main Canteen — foreign object in meal + multiple stale-food reports. Hygiene audit recommended.', aiConf:91, sentiment:'Angry', eta:'~2 days', feedback:null, timeline:[['Submitted','2026-09-30 13:10','AI triaged as High • Food & Canteen'],['Under Review','2026-09-30 15:00','Vendor notified. Samples collected.'],['Escalated','2026-10-01 10:20','Escalated to Admin — 4 similar reports in 7 days.']]},
+    {id:'CMP-2026-0131', title:'Street lights not working near parking lot, unsafe at night', desc:'All street lights near the north parking lot have been off for three days. It is completely dark after 7pm and feels very unsafe walking back to the hostel.', category:'Security', department:'Campus Security', building:'North Parking Lot', status:'In Progress', priority:'High', date:'2026-09-29 20:45', updated:'2d ago', student:'Rohan Das', sid:'STU-2023-1102', assignee:'Vikram Singh', upvotes:32, aiSummary:'Street-light outage at North Parking creating night safety risk. Joint Electrical + Security action needed.', aiConf:89, sentiment:'Worried', eta:'~2 days', feedback:null, timeline:[['Submitted','2026-09-29 20:45','AI triaged as High • Security'],['In Progress','2026-09-30 11:00','Temporary patrols added. Electrical team replacing fixtures.']]},
+    {id:'CMP-2026-0129', title:'Ceiling fan wobbling dangerously in Girls Hostel A Room 204', desc:'The ceiling fan in Room 204 Girls Hostel A is making a loud grinding noise and wobbling dangerously. We have switched it off fearing it may fall.', category:'Electrical', department:'Electrical Maintenance', building:'Girls Hostel A — Room 204', status:'Resolved', priority:'High', date:'2026-09-28 11:30', updated:'3d ago', student:'Aarav Sharma', sid:'STU-2023-1847', assignee:'Rahul Verma', upvotes:7, aiSummary:'Faulty ceiling fan with fall risk in Hostel A-204. Replacement recommended.', aiConf:96, sentiment:'Scared', eta:'Done', feedback:5, timeline:[['Submitted','2026-09-28 11:30','AI triaged as High • Electrical'],['In Progress','2026-09-28 14:00','Technician visit done.'],['Resolved','2026-09-29 10:15','Fan replaced & tested. Awaiting student confirmation.']]},
+    {id:'CMP-2026-0126', title:'Garbage not collected for 4 days behind Block A', desc:'Garbage bins behind Block A are overflowing for the last 4 days. Bad smell is spreading to classrooms and there are stray dogs gathering around.', category:'Cleanliness', department:'Housekeeping', building:'Block A — Rear', status:'Resolved', priority:'Medium', date:'2026-09-27 08:15', updated:'4d ago', student:'Aarav Sharma', sid:'STU-2023-1847', assignee:'Meena Joshi', upvotes:18, aiSummary:'Overflowing waste behind Block A for 4 days — odor + stray animal risk. Extra pickup scheduled.', aiConf:92, sentiment:'Annoyed', eta:'Done', feedback:4, timeline:[['Submitted','2026-09-27 08:15','AI triaged as Medium • Cleanliness'],['Resolved','2026-09-28 09:40','Waste cleared. Daily pickup reinstated.']]},
+    {id:'CMP-2026-0122', title:'Projector not working in Seminar Hall 2 before symposium', desc:'The projector in Seminar Hall 2 shows no display. HDMI and wireless both fail. We have an inter-college symposium tomorrow morning, need this fixed today.', category:'IT Support', department:'IT & Network Services', building:'Seminar Hall 2', status:'In Progress', priority:'High', date:'2026-09-26 16:00', updated:'5d ago', student:'Ishaan Rao', sid:'STU-2022-0711', assignee:'Priya Nair', upvotes:5, aiSummary:'AV failure in Seminar Hall 2 ahead of symposium — likely lamp/HDMI matrix issue. Spare unit advised.', aiConf:88, sentiment:'Stressed', eta:'~5 hours', feedback:null, timeline:[['Submitted','2026-09-26 16:00','AI triaged as High • IT Support'],['In Progress','2026-09-27 09:00','AV technician on site. Backup projector arranged.']]},
+    {id:'CMP-2026-0119', title:'College bus Route 7 consistently 30 mins late', desc:'Route 7 morning bus has been 25-30 minutes late every day this week. Students are missing first-period attendance. Driver says route changed without notice.', category:'Transport', department:'Transport Cell', building:'Route 7 — City Loop', status:'Under Review', priority:'Medium', date:'2026-09-25 09:30', updated:'6d ago', student:'Divya Menon', sid:'STU-2024-1130', assignee:'Arun Pillai', upvotes:27, aiSummary:'Chronic 30-min delay on Route 7 affecting attendance. Route/timetable review needed.', aiConf:87, sentiment:'Frustrated', eta:'~3 days', feedback:null, timeline:[['Submitted','2026-09-25 09:30','AI triaged as Medium • Transport'],['Under Review','2026-09-26 12:00','GPS logs pulled. Transport committee reviewing.']]},
+    {id:'CMP-2026-0115', title:'Library AC not working, extremely hot on 3rd floor', desc:'Air conditioning on the 3rd floor of the library has not been working for two days. It is extremely hot and difficult to study with full occupancy.', category:'Civil & Infrastructure', department:'Civil & Infrastructure', building:'Central Library — Floor 3', status:'Assigned', priority:'Medium', date:'2026-09-24 12:00', updated:'1w ago', student:'Karan Malhotra', sid:'STU-2023-1455', assignee:'Deepak Yadav', upvotes:15, aiSummary:'HVAC failure on Library Floor 3 during peak study hours. Compressor service required.', aiConf:90, sentiment:'Uncomfortable', eta:'~2 days', feedback:null, timeline:[['Submitted','2026-09-24 12:00','AI triaged as Medium • Civil'],['Assigned','2026-09-24 17:30','HVAC vendor assigned. Parts ordered.']]},
+    {id:'CMP-2026-0110', title:'Broken tiles and seepage in Chemistry Lab 3', desc:'Floor tiles near the sink in Chemistry Lab 3 are broken and there is water seepage on the wall. Risky during practicals with chemicals around.', category:'Civil & Infrastructure', department:'Civil & Infrastructure', building:'Science Block — Chem Lab 3', status:'Submitted', priority:'Medium', date:'2026-09-23 10:20', updated:'1w ago', student:'Aarav Sharma', sid:'STU-2023-1847', assignee:'Unassigned', upvotes:4, aiSummary:'Broken tiles + seepage in Chem Lab 3 near chemical area. Safety repair flagged.', aiConf:86, sentiment:'Concerned', eta:'~4 days', feedback:null, timeline:[['Submitted','2026-09-23 10:20','AI triaged as Medium • Civil • awaiting assignment']]},
+    {id:'CMP-2026-0108', title:' hostel mess dinner timing too early, request extension', desc:'Mess dinner ends at 7:30pm which is too early for students with evening labs till 7pm. Request to extend dinner timing till 8:30pm.', category:'Hostel', department:'Hostel Office', building:'Boys Hostel B — Mess', status:'Closed', priority:'Low', date:'2026-09-20 19:00', updated:'1w ago', student:'Aarav Sharma', sid:'STU-2023-1847', assignee:'Hostel Warden', upvotes:52, aiSummary:'Policy request to extend mess dinner timing for evening-lab students. Approved with conditions.', aiConf:84, sentiment:'Polite', eta:'Done', feedback:5, timeline:[['Submitted','2026-09-20 19:00','AI triaged as Low • Hostel'],['Resolved','2026-09-25 18:00','Approved: dinner extended till 8:15pm on weekdays.'],['Closed','2026-09-26 09:00','Confirmed by 40+ students.']]},
+    {id:'CMP-2026-0104', title:'Drinking water taps dry on 1st floor of Block B', desc:'All drinking water taps on the 1st floor of Block B have been dry since yesterday. Students have to go to other floors between classes.', category:'Plumbing', department:'Plumbing & Water', building:'Block B — Floor 1', status:'Resolved', priority:'Medium', date:'2026-09-18 11:00', updated:'2w ago', student:'Sneha Patel', sid:'STU-2024-0921', assignee:'Suresh Kumar', upvotes:11, aiSummary:'Dry drinking-water taps on Block B Floor 1 — likely valve/pump issue. Resolved via line repair.', aiConf:91, sentiment:'Inconvenienced', eta:'Done', feedback:4, timeline:[['Submitted','2026-09-18 11:00','AI triaged as Medium • Plumbing'],['Resolved','2026-09-19 13:00','Pipe valve repaired. Water restored.']]},
+    {id:'CMP-2026-0099', title:'Request: more power sockets in reading hall', desc:'The reading hall has only 6 working power sockets for 80+ seats. Students cannot charge laptops during long study hours. Please add more charging points.', category:'Electrical', department:'Electrical Maintenance', building:'Reading Hall', status:'Closed', priority:'Low', date:'2026-09-15 15:30', updated:'2w ago', student:'Rohan Das', sid:'STU-2023-1102', assignee:'Rahul Verma', upvotes:63, aiSummary:'Capacity request: additional charging points in reading hall. Approved as minor upgrade.', aiConf:82, sentiment:'Suggestive', eta:'Done', feedback:5, timeline:[['Submitted','2026-09-15 15:30','AI triaged as Low • Electrical'],['Resolved','2026-09-22 17:00','12 new sockets installed.'],['Closed','2026-09-23 09:00','Verified by students.']]},
+  ];
+}
+
+const USERS = {
+  student:{name:'Aarav Sharma', email:'aarav.sharma@northbridge.edu', detail:'Student • B.Tech CSE, 3rd Year', id:'STU-2023-1847', avatar:'https://i.pravatar.cc/80?img=13'},
+  staff:{name:'Rahul Verma', email:'rahul.verma@northbridge.edu', detail:'Officer • Electrical Maintenance', id:'STF-2019-042', avatar:'https://i.pravatar.cc/80?img=12'},
+  admin:{name:'Dr. Meera Nair', email:'meera.nair@northbridge.edu', detail:'Dean of Operations • Admin', id:'ADM-2015-003', avatar:'https://i.pravatar.cc/80?img=32'},
+};
+
+// ---------- State ----------
+let state = { user:null, role:'student', tab:'overview', complaints: seedComplaints(), notifRead:false, filterStatus:'All', filterPriority:'All', search:'', staffFilter:'all', adminRange:'30d', selectedTrack:null, lastAI:null, formDraft:{title:'',desc:'',building:'',room:''} };
+let charts = {};
+let selectedRole = 'student';
+
+// ---------- Utils ----------
+const $ = id => document.getElementById(id);
+function esc(s){return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function toast(title, msg, type='success'){
+  const colors = {success:['#059669','bg-emerald-50 border-emerald-200','✓'], info:['#2563EB','bg-brand-50 border-brand-200','✦'], warn:['#D97706','bg-amber-50 border-amber-200','⚠'], error:['#E11D48','bg-rose-50 border-rose-200','!']};
+  const [c,bg,ic] = colors[type]||colors.success;
+  const el = document.createElement('div');
+  el.className = `toast-in bg-white border ${bg} rounded-2xl shadow-xl p-4 flex gap-3 items-start`;
+  el.innerHTML = `<div class="w-8 h-8 rounded-xl flex items-center justify-center font-extrabold text-white shrink-0" style="background:${c}">${ic}</div><div class="min-w-0"><div class="font-bold text-[13.5px] text-navy-900">${esc(title)}</div><div class="text-[12.5px] text-slate-500 font-medium mt-0.5">${esc(msg)}</div></div>`;
+  $('toasts').appendChild(el);
+  setTimeout(()=>{el.style.transition='all .4s';el.style.opacity='0';el.style.transform='translateX(30px)';setTimeout(()=>el.remove(),400);},4200);
+}
+function statusBadge(s){
+  const m={'Submitted':'bg-slate-100 text-slate-700 border-slate-200','Under Review':'bg-amber-50 text-amber-700 border-amber-200','Assigned':'bg-indigo-50 text-indigo-700 border-indigo-200','In Progress':'bg-brand-50 text-brand-700 border-brand-200','Resolved':'bg-emerald-50 text-emerald-700 border-emerald-200','Closed':'bg-slate-100 text-slate-500 border-slate-200','Escalated':'bg-rose-50 text-rose-700 border-rose-200'};
+  const d={'Submitted':'#64748B','Under Review':'#D97706','Assigned':'#6366F1','In Progress':'#2563EB','Resolved':'#059669','Closed':'#94A3B8','Escalated':'#E11D48'};
+  return `<span class="inline-flex items-center gap-1.5 text-[11.5px] font-extrabold border rounded-full px-2.5 py-1 ${m[s]||m['Submitted']}"><span class="w-1.5 h-1.5 rounded-full" style="background:${d[s]}"></span>${s}</span>`;
+}
+function priBadge(p){
+  const m={'Critical':'bg-rose-600 text-white','High':'bg-orange-500 text-white','Medium':'bg-amber-400 text-amber-950','Low':'bg-slate-200 text-slate-700'};
+  return `<span class="inline-flex items-center text-[11px] font-extrabold rounded-full px-2.5 py-1 ${m[p]}">${p}</span>`;
+}
+function catIcon(c){
+  const m={'Electrical':'⚡','Plumbing':'💧','Network & WiFi':'📶','IT Support':'💻','Cleanliness':'🧹','Hostel':'🏠','Food & Canteen':'🍽️','Security':'🛡️','Transport':'🚌','Library':'📚','Academic':'📖','Civil & Infrastructure':'🏗️','Civil':'🏗️'};
+  return m[c]||'📋';
+}
+function destroyCharts(){Object.values(charts).forEach(c=>{try{c.destroy()}catch(e){}});charts={};}
+
+/* ==================================================================
+   AI ENGINE — simulated NLP triage
+================================================================== */
+const AI_RULES = [
+  {cat:'Electrical', dept:'Electrical Maintenance', kw:['power','electric','light','fan','socket','switch','current','shock','wiring','outage','bulb','sparking','short circuit','voltage','charging','sockets'], action:'Dispatch electrician for on-site inspection. Isolate circuit if sparking/smell reported.'},
+  {cat:'Plumbing', dept:'Plumbing & Water', kw:['water','leak','tap','pipe','drain','washroom','toilet','sink','sewage','bathroom','seepage','overflow','drinking'], action:'Send plumber to inspect line/valve. Shut off supply if active flooding.'},
+  {cat:'Network & WiFi', dept:'IT & Network Services', kw:['wifi','wi-fi','internet','network','lan','router','connectivity','signal','portal','broadband','hotspot'], action:'Check access point/controller status. Reset AP and verify DHCP/DNS.'},
+  {cat:'IT Support', dept:'IT & Network Services', kw:['projector','computer','printer','software','laptop','hdmi','display','av','screen','keyboard','system'], action:'Assign AV/IT technician with spare unit. Test all inputs on arrival.'},
+  {cat:'Cleanliness', dept:'Housekeeping', kw:['clean','garbage','dust','waste','dirty','sweep','trash','hygiene','smell','bins','overflowing','mosquito'], action:'Schedule extra housekeeping round. Clear waste and sanitize area.'},
+  {cat:'Food & Canteen', dept:'Food & Canteen', kw:['food','canteen','mess','meal','lunch','dinner','breakfast','stale','hygiene','thali','cafeteria','kitchen'], action:'Notify vendor + food safety officer. Collect samples and audit kitchen.'},
+  {cat:'Security', dept:'Campus Security', kw:['security','unsafe','theft','steal','street light','dark','cctv','guard','suspicious','safety','parking'], action:'Increase patrols in area. Verify CCTV coverage and lighting.'},
+  {cat:'Transport', dept:'Transport Cell', kw:['bus','transport','route','driver','late','cab','shuttle','vehicle','gps'], action:'Pull GPS logs and review timetable adherence with vendor.'},
+  {cat:'Library', dept:'Central Library', kw:['library','book','reading','study hall','journal','membership'], action:'Coordinate with library staff for access/facility fix.'},
+  {cat:'Hostel', dept:'Hostel Office', kw:['hostel','warden','room','mess timing','allotment','curfew','roommate'], action:'Route to hostel warden with occupancy details for resolution.'},
+  {cat:'Academic', dept:'Academic Office', kw:['exam','mark','grade','attendance','faculty','class','syllabus','result','assignment','timetable'], action:'Forward to academic coordinator with student records.'},
+  {cat:'Civil & Infrastructure', dept:'Civil & Infrastructure', kw:['ac','air condition','wall','crack','tile','ceiling','door','window','lift','elevator','building','furniture','bench','seepage','repair','construction','hot'], action:'Raise civil work order. Schedule vendor visit with materials.'},
+];
+const CRITICAL_KW = ['fire','smoke','shock','electrocution','burning smell','burning','sparking','short circuit','flood','burst','emergency','gas leak','injury','blood','collapse','falling','wobbling dangerously','unsafe'];
+const HIGH_KW = ['no power','no water','completely down','not working','broken','blocked','outage','stuck','overflow','leakage','three days','unsafe','unable','urgent','symposium','submission','due today','foreign object','plastic','stale'];
+const MED_KW = ['slow','dim','noise','crack','repair','replace','late','hot','dirty','smell','issue','problem','request'];
+
+function tokenize(s){return s.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2);}
+function jaccard(a,b){const A=new Set(tokenize(a)),B=new Set(tokenize(b));if(!A.size||!B.size)return 0;let i=0;A.forEach(w=>{if(B.has(w))i++});return i/(A.size+B.size-i);}
+
+function analyzeComplaint(title, desc, location=''){
+  const text = (title+' '+desc+' '+location).toLowerCase();
+  let best={cat:'General', dept:'Hostel Office', score:0, action:'Route to campus helpdesk for manual review.'};
+  AI_RULES.forEach(r=>{let s=0;r.kw.forEach(k=>{if(text.includes(k))s+=k.includes(' ')?3:2;});if(s>best.score)best={cat:r.cat,dept:r.dept,score:s,action:r.action};});
+  let urgency='Low', reason='Routine request with no time-sensitive or safety language detected.';
+  if(CRITICAL_KW.some(k=>text.includes(k))){urgency='Critical';reason='Safety-critical language detected (fire / shock / flooding / injury risk). Auto-escalated.';}
+  else if(HIGH_KW.some(k=>text.includes(k))){urgency='High';reason='Service outage / breakage / deadline-impacting language detected.';}
+  else if(MED_KW.some(k=>text.includes(k))){urgency='Medium';reason='Functional issue affecting comfort or daily routine.';}
+  const confidence = Math.min(98, Math.max(72, 74 + best.score*4 + (urgency==='Critical'?6:0)));
+  // duplicates
+  const dups = state.complaints.map(c=>({c, sim:jaccard(title+' '+desc, c.title+' '+c.desc)})).filter(x=>x.sim>0.22).sort((a,b)=>b.sim-a.sim).slice(0,2);
+  // summary
+  const firstSent = desc.split(/[.!?]/).filter(s=>s.trim().length>10)[0]||desc;
+  let summary = firstSent.trim().slice(0,140);
+  // keywords
+  const kws = [...new Set(tokenize(title+' '+desc))].filter(w=>!['the','and','for','with','this','that','have','has','been','from','are','was','were','will','they','them','there','here','please','since','every','about'].includes(w)).slice(0,6);
+  // sentiment
+  let sentiment='Neutral';
+  if(/angry|plastic|stale|worst|terrible|pathetic|disgusting/i.test(text))sentiment='Angry';
+  else if(/urgent|emergency|scared|dangerous|unsafe|fear/i.test(text))sentiment='Urgent';
+  else if(/frustrat|annoy|tired|again|still|days/i.test(text))sentiment='Frustrated';
+  else if(/please|request|kindly|suggest/i.test(text))sentiment='Polite';
+  else if(/worried|concern/i.test(text))sentiment='Concerned';
+  const eta = urgency==='Critical'?'~6 hours':urgency==='High'?'~1 day':urgency==='Medium'?'~3 days':'~5 days';
+  const officers={'Electrical Maintenance':'Rahul Verma','Plumbing & Water':'Suresh Kumar','IT & Network Services':'Priya Nair','Housekeeping':'Meena Joshi','Hostel Office':'Hostel Warden','Campus Security':'Vikram Singh','Transport Cell':'Arun Pillai','Central Library':'Library Desk','Food & Canteen':'Kavita Rao','Civil & Infrastructure':'Deepak Yadav','Academic Office':'Academic Coordinator'};
+  return {category:best.cat, department:best.dept, urgency, confidence, duplicates:dups, summary, keywords:kws, sentiment, eta, action:best.action, reason, officer:officers[best.dept]||'Duty Officer'};
+}
+
+/* ==================================================================
+   NAVIGATION
+================================================================== */
+function showView(v){
+  ['landingView','authView','dashView'].forEach(id=>$(id).classList.add('hidden'));
+  $(v).classList.remove('hidden');
+  window.scrollTo({top:0});
+  if(v==='landingView') initReveal();
+}
+function goLanding(){showView('landingView');}
+function goAuth(role){selectedRole=role||'student';paintRolePicker();showView('authView');}
+function pickRole(r){selectedRole=r;paintRolePicker();
+  $('authEmail').value = r==='student'?'aarav.sharma@northbridge.edu':r==='staff'?'rahul.verma@northbridge.edu':'meera.nair@northbridge.edu';
+}
+function paintRolePicker(){
+  document.querySelectorAll('.role-card').forEach(b=>{
+    const on = b.dataset.role===selectedRole;
+    b.style.borderColor = on?'#2563EB':'#E2E8F0';
+    b.style.background = on?'linear-gradient(135deg,#EFF6FF,#F5F3FF)':'#fff';
+    b.style.boxShadow = on?'0 8px 20px -8px rgba(37,99,235,.4)':'none';
+  });
+}
+function doLogin(){
+  $('loginBtn').innerHTML='<span class="typing"><span></span><span></span><span></span></span> Verifying...';
+  setTimeout(()=>{login(selectedRole);$('loginBtn').innerHTML='Sign in Securely →';},900);
+}
+function quickLogin(r){login(r);}
+function login(role){
+  state.role=role; state.user=USERS[role]; state.tab='overview';
+  $('sideName').textContent=state.user.name; $('topName').textContent=state.user.name;
+  $('sideAvatar').src=state.user.avatar; $('topAvatar').src=state.user.avatar;
+  $('roleLabelSide').textContent = role==='student'?'Student Portal':role==='staff'?'Staff Console':'Admin Suite';
+  $('topRole').textContent=state.user.detail;
+  $('topNewBtn2').style.display = role==='student'?'flex':'none';
+  $('topNewBtn').style.display = role==='student'?'block':'none';
+  renderNotifs(); buildSidebar(); showView('dashView'); renderTab();
+  toast(`Welcome back, ${state.user.name.split(' ')[0]}!`, role==='student'?'Your campus workspace is ready.':role==='staff'?'You have urgent items in your queue.':'Campus analytics refreshed just now.', 'info');
+}
+function logout(){destroyCharts();showView('landingView');toast('Signed out','You have been securely signed out.','info');}
+
+/* ==================================================================
+   SIDEBAR
+================================================================== */
+const NAVS = {
+  student:[['overview','Overview',IC.grid],['my','My Complaints',IC.list],['new','New Complaint',IC.plus],['track','Track Status',IC.track],['feedback','Feedback',IC.star]],
+  staff:[['overview','Command Queue',IC.grid],['inbox','Smart Inbox',IC.inbox],['urgent','Urgent Attention',IC.bell],['performance','My Performance',IC.chart]],
+  admin:[['overview','Campus Overview',IC.grid],['analytics','Analytics & Insights',IC.chart],['departments','Departments',IC.dept],['users','Users & Roles',IC.users],['reports','Reports & Audit',IC.list]],
+};
+function buildSidebar(){
+  const items = NAVS[state.role];
+  const html = items.map(([k,l,ic])=>`<div class="sidebar-link ${state.tab===k?'active':''}" onclick="setTab('${k}')"><span class="${state.tab===k?'text-brand-600':'text-slate-400'}">${ic}</span>${l}${k==='urgent'?'<span class="ml-auto bg-rose-500 text-white text-[10px] font-extrabold rounded-full px-2 py-0.5">3</span>':''}</div>`).join('')
+    + `<div class="pt-3 mt-3 border-t border-slate-100"><div class="text-[10.5px] font-extrabold tracking-[0.12em] text-slate-400 uppercase px-3 mb-2">Workspace</div>
+    <div class="sidebar-link" onclick="toggleCmd(true)"><span class="text-slate-400">${IC.list}</span>Quick Search <span class="cmd-kbd ml-auto">⌘K</span></div>
+    <div class="sidebar-link" onclick="toast('Settings','Workspace settings opening soon in this demo.','info')"><span class="text-slate-400">${IC.gear}</span>Settings</div></div>`;
+  $('sidebarNav').innerHTML=html; $('sidebarNavMobile').innerHTML=html;
+}
+function setTab(t){state.tab=t;buildSidebar();document.getElementById('mobileSidebar').classList.add('-translate-x-full');renderTab();document.querySelector('#dashView main').scrollTop=0;window.scrollTo({top:0,behavior:'smooth'});}
+
+/* ==================================================================
+   NOTIFICATIONS
+================================================================== */
+function seedNotifs(){
+  if(state.role==='student')return [
+    {t:'AI triage complete', d:'CMP-2026-0142 marked Critical • Electrician dispatched', time:'2h ago', c:'#E11D48'},
+    {t:'Status update', d:'CMP-2026-0141 assigned to Priya Nair (IT & Network)', time:'3h ago', c:'#2563EB'},
+    {t:'Feedback requested', d:'CMP-2026-0126 resolved — please rate your experience', time:'1d ago', c:'#059669'},
+    {t:'Duplicate merged', d:'Your WiFi report was linked with 5 similar reports', time:'1d ago', c:'#7C3AED'},
+  ];
+  if(state.role==='staff')return [
+    {t:'Critical assigned', d:'CMP-2026-0142 — Block C power outage with burning smell', time:'2h ago', c:'#E11D48'},
+    {t:'SLA warning', d:'CMP-2026-0122 breaches SLA in 5 hours', time:'4h ago', c:'#D97706'},
+    {t:'New in queue', d:'3 new electrical complaints routed to you', time:'6h ago', c:'#2563EB'},
+    {t:'Kudos received', d:'Student rated your resolution 5 stars', time:'1d ago', c:'#059669'},
+  ];
+  return [
+    {t:'Anomaly detected', d:'Food complaints +180% this week at Main Canteen', time:'1h ago', c:'#E11D48'},
+    {t:'SLA report ready', d:'September campus SLA compliance: 93.4%', time:'5h ago', c:'#2563EB'},
+    {t:'Escalation', d:'CMP-2026-0135 escalated — needs admin review', time:'1d ago', c:'#D97706'},
+    {t:'Department alert', d:'IT & Network load is High — consider rebalancing', time:'1d ago', c:'#7C3AED'},
+  ];
+}
+function renderNotifs(){
+  const n = seedNotifs();
+  $('notifCount').textContent=n.length; $('notifCount').style.display = state.notifRead?'none':'flex';
+  $('notifList').innerHTML = n.map(x=>`<div class="px-5 py-3.5 flex gap-3 hover:bg-slate-50 transition cursor-pointer"><div class="w-2 h-2 rounded-full mt-1.5 shrink-0" style="background:${x.c}"></div><div class="min-w-0"><div class="font-bold text-[13px]">${esc(x.t)}</div><div class="text-[12.5px] text-slate-500 font-medium">${esc(x.d)}</div><div class="text-[11px] text-slate-400 font-bold mt-1">${x.time}</div></div></div>`).join('');
+}
+function markAllRead(){state.notifRead=true;renderNotifs();toast('All caught up','All notifications marked as read.');}
+
+/* ==================================================================
+   COMMAND PALETTE
+================================================================== */
+function toggleCmd(open){
+  $('cmdPalette').classList.toggle('hidden',!open);
+  if(open){$('cmdInput').value='';cmdSearch('');setTimeout(()=>$('cmdInput').focus(),50);}
+}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();toggleCmd($('cmdPalette').classList.contains('hidden'));}if(e.key==='Escape'){toggleCmd(false);closeDetail();closeConfirm();}});
+function cmdSearch(q){
+  q=q.toLowerCase();
+  const results = state.complaints.filter(c=>!q||c.title.toLowerCase().includes(q)||c.id.toLowerCase().includes(q)||c.category.toLowerCase().includes(q)).slice(0,6);
+  const actions = [['+ File new complaint',"setTab('new');toggleCmd(false)"],['📊 Open analytics',"setTab('analytics');toggleCmd(false)"],['🏠 Go to overview',"setTab('overview');toggleCmd(false)"]].filter(a=>!q||a[0].toLowerCase().includes(q));
+  $('cmdResults').innerHTML = (results.map(c=>`<div onclick="openDetail('${c.id}');toggleCmd(false)" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-brand-50 cursor-pointer transition"><span class="text-lg">${catIcon(c.category)}</span><div class="min-w-0 flex-1"><div class="font-bold text-[13px] truncate">${esc(c.title)}</div><div class="text-[11.5px] text-slate-500 font-semibold">${c.id} • ${c.category}</div></div>${statusBadge(c.status)}</div>`).join('')||'')
+   + (actions.map(a=>`<div onclick="${a[1]}" class="px-3 py-2.5 rounded-xl hover:bg-brand-50 cursor-pointer font-bold text-[13px] text-brand-700 transition">${a[0]}</div>`).join('')||'<div class="p-6 text-center text-slate-400 text-[13px] font-semibold">No results found</div>');
+}
+
+/* ==================================================================
+   RENDER DISPATCH
+================================================================== */
+function renderTab(){
+  destroyCharts();
+  const c = $('dashContent');
+  if(state.role==='student'){
+    if(state.tab==='overview')c.innerHTML=studentOverview();
+    else if(state.tab==='my')c.innerHTML=studentMy();
+    else if(state.tab==='new'){c.innerHTML=studentNew();initNewForm();}
+    else if(state.tab==='track')c.innerHTML=studentTrack();
+    else if(state.tab==='feedback')c.innerHTML=studentFeedback();
+  }else if(state.role==='staff'){
+    if(state.tab==='overview')c.innerHTML=staffOverview();
+    else if(state.tab==='inbox')c.innerHTML=staffInbox();
+    else if(state.tab==='urgent')c.innerHTML=staffUrgent();
+    else if(state.tab==='performance'){c.innerHTML=staffPerf();initStaffPerfCharts();}
+  }else{
+    if(state.tab==='overview'){c.innerHTML=adminOverview();initAdminCharts();}
+    else if(state.tab==='analytics'){c.innerHTML=adminAnalytics();initAnalyticsCharts();}
+    else if(state.tab==='departments')c.innerHTML=adminDepts();
+    else if(state.tab==='users')c.innerHTML=adminUsers();
+    else if(state.tab==='reports')c.innerHTML=adminReports();
+  }
+  if(state.role==='student'&&state.tab==='overview')initStudentMiniCharts();
+  c.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
+}
+
+/* ==================================================================
+   STUDENT VIEWS
+================================================================== */
+function myComplaints(){return state.complaints.filter(c=>c.student==='Aarav Sharma');}
+function studentOverview(){
+  const mine=myComplaints();
+  const total=mine.length, inprog=mine.filter(c=>['Submitted','Under Review','Assigned','In Progress','Escalated'].includes(c.status)).length;
+  const resolved=mine.filter(c=>['Resolved','Closed'].includes(c.status)).length;
+  const recent=[...state.complaints].filter(c=>c.student==='Aarav Sharma').slice(0,5);
+  return `
+  <div class="flex flex-col lg:flex-row lg:items-center gap-4 mb-6 fade-slide">
+    <div><h1 class="display font-extrabold text-[26px] sm:text-[30px]">Good morning, Aarav 👋</h1><p class="text-slate-500 text-[14px] font-medium mt-1">Here's what's happening with your campus requests today.</p></div>
+    <div class="lg:ml-auto flex gap-2.5"><button onclick="setTab('track')" class="btn-ghost rounded-xl px-5 py-3 font-bold text-[13.5px]">Track Request</button><button onclick="setTab('new')" class="btn-primary rounded-xl px-5 py-3 font-bold text-[13.5px]">+ New Complaint</button></div>
+  </div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 fade-slide">
+    ${[['Total Complaints',total,'All time submissions','📋','#2563EB','bg-brand-50'],['In Progress',inprog,'Being actively worked on','⚙️','#D97706','bg-amber-50'],['Resolved',resolved,'Fixed & verified','✅','#059669','bg-emerald-50'],['Avg. Response','4.2h','AI-routed median','⚡','#7C3AED','bg-violet-50']].map(s=>`
+    <div class="card p-5 card-hover"><div class="flex items-center justify-between"><div class="w-10 h-10 rounded-xl ${s[5]} flex items-center justify-center text-[18px]">${s[3]}</div><span class="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 rounded-full px-2 py-0.5">▲ 12%</span></div><div class="stat-num font-display font-extrabold text-[30px] mt-3">${s[1]}</div><div class="font-bold text-[13.5px]">${s[0]}</div><div class="text-[12px] text-slate-500 font-medium">${s[2]}</div></div>`).join('')}
+  </div>
+  <div class="card mt-5 p-5 lg:p-6 !border-brand-200 grad-soft flex flex-col lg:flex-row items-start lg:items-center gap-4 fade-slide">
+    <div class="w-12 h-12 rounded-2xl grad-bg flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/25"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Z"/><path d="M9 12l2 2 4-4" stroke-linecap="round"/></svg></div>
+    <div class="flex-1"><div class="font-display font-extrabold text-[16px]">✦ AI Insight: Your Block C power issue is being prioritized</div><p class="text-slate-600 text-[13.5px] mt-1">Our engine detected <b>2 linked outages</b> in Block C and merged them into one work order. Technician is on-site — expected fix within <b>6 hours</b>. We'll notify you at each step.</p></div>
+    <button onclick="openDetail('CMP-2026-0142')" class="btn-primary rounded-xl px-5 py-2.5 font-bold text-[13px] shrink-0">View Live Status</button>
+  </div>
+  <div class="grid lg:grid-cols-3 gap-5 mt-5">
+    <div class="lg:col-span-2 card p-0 overflow-hidden fade-slide">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100"><div class="font-display font-bold text-[16px]">Recent Complaints</div><button onclick="setTab('my')" class="text-[13px] font-bold text-brand-600 hover:underline">View all →</button></div>
+      <div class="overflow-x-auto"><table class="w-full text-left min-w-[560px]">
+        <thead><tr class="text-[11px] font-extrabold tracking-wider text-slate-400 uppercase border-b border-slate-100"><th class="px-6 py-3">Complaint</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Priority</th><th class="px-6 py-3 text-right">Updated</th></tr></thead>
+        <tbody>${recent.map(c=>`<tr onclick="openDetail('${c.id}')" class="border-b border-slate-50 table-row-hover cursor-pointer transition"><td class="px-6 py-3.5"><div class="flex items-center gap-3"><span class="text-[20px]">${catIcon(c.category)}</span><div class="min-w-0"><div class="font-bold text-[13.5px] truncate max-w-[260px]">${esc(c.title)}</div><div class="text-[11.5px] text-slate-500 font-semibold">${c.id} • ${c.category}</div></div></div></td><td class="px-4 py-3.5">${statusBadge(c.status)}</td><td class="px-4 py-3.5">${priBadge(c.priority)}</td><td class="px-6 py-3.5 text-right text-[12px] font-bold text-slate-500">${c.updated}</td></tr>`).join('')}</tbody>
+      </table></div>
+    </div>
+    <div class="space-y-5">
+      <div class="card p-6 fade-slide"><div class="font-display font-bold text-[15px]">Resolution Breakdown</div><div class="h-[190px] mt-3"><canvas id="stuDonut"></canvas></div>
+        <div class="grid grid-cols-3 gap-2 mt-4 text-center">${[['Resolved','43%','#059669'],['Active','36%','#2563EB'],['Pending','21%','#D97706']].map(x=>`<div class="bg-slate-50 rounded-xl py-2"><div class="font-extrabold text-[14px]" style="color:${x[2]}">${x[1]}</div><div class="text-[11px] font-bold text-slate-500">${x[0]}</div></div>`).join('')}</div></div>
+      <div class="card p-6 fade-slide"><div class="font-display font-bold text-[15px]">💡 Tips for faster resolution</div><ul class="mt-3 space-y-2.5 text-[13px] font-medium text-slate-600"><li class="flex gap-2"><span class="text-brand-600 font-bold">1.</span> Add exact building + room number</li><li class="flex gap-2"><span class="text-brand-600 font-bold">2.</span> Mention "since when" it started</li><li class="flex gap-2"><span class="text-brand-600 font-bold">3.</span> Attach a photo if possible</li></ul><button onclick="setTab('new')" class="w-full mt-4 btn-ghost rounded-xl py-2.5 font-bold text-[13px]">File with AI Assist ✦</button></div>
+    </div>
+  </div>`;
+}
+function initStudentMiniCharts(){
+  const ctx=$('stuDonut');if(!ctx)return;
+  charts.d1=new Chart(ctx,{type:'doughnut',data:{labels:['Resolved','In Progress','Pending'],datasets:[{data:[43,36,21],backgroundColor:['#059669','#2563EB','#F59E0B'],borderWidth:3,borderColor:'#fff'}]},options:{cutout:'68%',plugins:{legend:{display:false}},maintainAspectRatio:false}});
+}
+function studentMy(){
+  const all=myComplaints();
+  const f=all.filter(c=>(state.filterStatus==='All'||c.status===state.filterStatus)&&(state.filterPriority==='All'||c.priority===state.filterPriority)&&(!state.search||(c.title+c.id+c.category).toLowerCase().includes(state.search.toLowerCase())));
+  return `
+  <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-5 fade-slide"><div><h1 class="display font-extrabold text-[26px]">My Complaints</h1><p class="text-slate-500 text-[14px] font-medium">${all.length} total • ${all.filter(c=>['Resolved','Closed'].includes(c.status)).length} resolved</p></div>
+  <button onclick="setTab('new')" class="btn-primary rounded-xl px-5 py-3 font-bold text-[13.5px] sm:ml-auto">+ New Complaint</button></div>
+  <div class="card p-4 mb-4 flex flex-col md:flex-row gap-3 fade-slide">
+    <div class="relative flex-1"><svg class="absolute left-3.5 top-3.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input value="${esc(state.search)}" oninput="state.search=this.value;renderTab()" placeholder="Search by title, ID or category..." class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-[13.5px] font-medium"/></div>
+    <select onchange="state.filterStatus=this.value;renderTab()" class="border border-slate-200 rounded-xl px-4 py-3 text-[13.5px] font-bold bg-white">${['All','Submitted','Under Review','Assigned','In Progress','Resolved','Closed','Escalated'].map(s=>`<option ${state.filterStatus===s?'selected':''}>${s}</option>`).join('')}</select>
+    <select onchange="state.filterPriority=this.value;renderTab()" class="border border-slate-200 rounded-xl px-4 py-3 text-[13.5px] font-bold bg-white">${['All','Critical','High','Medium','Low'].map(s=>`<option ${state.filterPriority===s?'selected':''}>${s==='All'?'All Priorities':s}</option>`).join('')}</select>
+  </div>
+  <div class="grid gap-4 fade-slide">${f.length?f.map(c=>`
+    <div onclick="openDetail('${c.id}')" class="card card-hover p-5 cursor-pointer flex flex-col sm:flex-row sm:items-center gap-4">
+      <div class="w-12 h-12 rounded-2xl grad-soft border border-brand-100 flex items-center justify-center text-[22px] shrink-0">${catIcon(c.category)}</div>
+      <div class="flex-1 min-w-0"><div class="font-bold text-[15px] leading-snug">${esc(c.title)}</div><div class="text-[12.5px] text-slate-500 font-semibold mt-1">${c.id} • ${c.category} • ${esc(c.building)} • ${c.date.split(' ')[0]}</div>
+      <div class="flex flex-wrap gap-2 mt-2.5">${statusBadge(c.status)}${priBadge(c.priority)}<span class="text-[11.5px] font-bold text-slate-500 bg-slate-100 rounded-full px-2.5 py-1">👤 ${esc(c.assignee)}</span></div></div>
+      <div class="flex sm:flex-col items-center sm:items-end gap-2 shrink-0"><div class="text-[12px] font-bold text-slate-400">${c.updated}</div><span class="text-[13px] font-bold text-brand-600">Details →</span></div>
+    </div>`).join(''):'<div class="card p-12 text-center text-slate-400 font-semibold">No complaints match your filters.</div>'}</div>`;
+}
+
+/* ---- New Complaint with live AI ---- */
+let aiDebounce=null;
+function studentNew(){
+  return `
+  <div class="mb-5 fade-slide"><h1 class="display font-extrabold text-[26px]">File a New Complaint</h1><p class="text-slate-500 text-[14px] font-medium">Describe the issue naturally — <b class="text-brand-600">AI analyzes as you type</b> and routes it to the right team.</p></div>
+  <div class="grid lg:grid-cols-5 gap-5">
+    <div class="lg:col-span-3 card p-6 sm:p-7 fade-slide">
+      <div class="flex items-center gap-2 mb-5"><span class="w-7 h-7 rounded-lg grad-bg text-white text-[13px] font-extrabold flex items-center justify-center">1</span><span class="font-display font-bold text-[16px]">Describe your issue</span></div>
+      <label class="text-[12.5px] font-bold text-slate-600">Complaint Title *</label>
+      <input id="fTitle" oninput="onFormType()" value="${esc(state.formDraft.title)}" placeholder="e.g. No hot water in Girls Hostel A since yesterday" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium mt-1.5"/>
+      <label class="text-[12.5px] font-bold text-slate-600 mt-4 block">Detailed Description * <span class="text-slate-400 font-semibold">(min 20 characters)</span></label>
+      <textarea id="fDesc" oninput="onFormType()" rows="5" placeholder="What happened? Where exactly? Since when? How does it affect you? The more detail, the better AI can help..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium mt-1.5 resize-none">${esc(state.formDraft.desc)}</textarea>
+      <div class="flex justify-between text-[11.5px] font-bold mt-1"><span id="charCount" class="text-slate-400">0 characters</span><span class="text-brand-600">✦ AI reads context, not just keywords</span></div>
+      <div class="grid sm:grid-cols-2 gap-4 mt-4">
+        <div><label class="text-[12.5px] font-bold text-slate-600">Building / Location *</label>
+        <select id="fBuilding" onchange="onFormType()" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium mt-1.5 bg-white">
+          ${['Block A','Block B','Block C','Boys Hostel A','Boys Hostel B','Girls Hostel A','Central Library','Reading Hall','Main Canteen','Seminar Hall 2','Science Block','North Parking Lot','Sports Complex','Admin Block'].map(b=>`<option ${state.formDraft.building===b?'selected':''}>${b}</option>`).join('')}</select></div>
+        <div><label class="text-[12.5px] font-bold text-slate-600">Room / Floor (optional)</label><input id="fRoom" oninput="onFormType()" value="${esc(state.formDraft.room)}" placeholder="e.g. Room 304, Floor 2" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-[14px] font-medium mt-1.5"/></div>
+      </div>
+      <div class="mt-4 border-2 border-dashed border-slate-200 rounded-2xl p-5 text-center hover:border-brand-300 hover:bg-brand-50/50 transition cursor-pointer" onclick="fakeUpload(this)">
+        <div class="text-[26px]">📎</div><div class="font-bold text-[13.5px] mt-1">Drop photos or click to upload</div><div class="text-[12px] text-slate-500 font-medium">PNG, JPG up to 10MB • helps staff resolve 40% faster</div>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 mt-5">
+        <label class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex-1 cursor-pointer" onclick="event.preventDefault();this.querySelector('.toggle').classList.toggle('on')"><div class="toggle"></div><div><div class="font-bold text-[13px]">Submit anonymously</div><div class="text-[11.5px] text-slate-500 font-medium">Identity hidden from department staff</div></div></label>
+        <label class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex-1 cursor-pointer" onclick="event.preventDefault();this.querySelector('.toggle').classList.toggle('on');this.querySelector('.toggle').classList.add('on')"><div class="toggle on"></div><div><div class="font-bold text-[13px]">SMS + Email updates</div><div class="text-[11.5px] text-slate-500 font-medium">Notify me at every stage</div></div></label>
+      </div>
+      <button onclick="preSubmit()" class="btn-primary w-full rounded-xl py-4 font-bold text-[15px] mt-5">Review AI Analysis & Submit →</button>
+    </div>
+    <div class="lg:col-span-2"><div class="lg:sticky lg:top-[88px]" id="aiPanelWrap">${aiPanelHTML(null)}</div></div>
+  </div>`;
+}
+function aiPanelHTML(a, scanning=false){
+  if(scanning) return `
+  <div class="card p-6 relative overflow-hidden"><div class="scan-line"></div>
+    <div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-xl grad-bg flex items-center justify-center"><span class="typing"><span style="background:#fff"></span><span style="background:#fff"></span><span style="background:#fff"></span></span></div><div><div class="font-display font-bold text-[15px]">AI is analyzing...</div><div class="text-[12px] text-slate-500 font-semibold">Reading your description live</div></div></div>
+    <div class="space-y-2 mt-5">
+      <div class="ai-step done">✓ Tokenized 48 phrases</div><div class="ai-step done">✓ Intent extracted</div><div class="ai-step active"><span class="typing"><span></span><span></span><span></span></span> Classifying category & urgency...</div><div class="ai-step">○ Checking duplicates</div><div class="ai-step">○ Generating summary</div>
+    </div></div>`;
+  if(!a) return `
+  <div class="card p-6 text-center">
+    <div class="w-14 h-14 rounded-2xl grad-soft border border-brand-100 flex items-center justify-center mx-auto text-[26px]">✦</div>
+    <div class="font-display font-bold text-[16px] mt-4">AI Analysis Panel</div>
+    <p class="text-slate-500 text-[13px] mt-2 leading-relaxed">Start typing your complaint and watch AI detect the <b>category</b>, <b>urgency</b>, <b>department</b>, <b>duplicates</b> & <b>summary</b> — live, before you submit.</p>
+    <div class="grid grid-cols-3 gap-2 mt-5">${['Category','Urgency','Department','Duplicates','Summary','ETA'].map(x=>`<div class="shimmer rounded-xl h-[54px]"></div>`).join('')}</div>
+  </div>`;
+  const urgColor = a.urgency==='Critical'?'#E11D48':a.urgency==='High'?'#EA580C':a.urgency==='Medium'?'#D97706':'#64748B';
+  const urgBg = a.urgency==='Critical'?'bg-rose-50 border-rose-200':a.urgency==='High'?'bg-orange-50 border-orange-200':a.urgency==='Medium'?'bg-amber-50 border-amber-200':'bg-slate-50 border-slate-200';
+  return `
+  <div class="card p-0 overflow-hidden !border-brand-200">
+    <div class="grad-bg px-6 py-4 flex items-center gap-3"><div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-white font-extrabold">✦</div>
+      <div><div class="font-display font-bold text-white text-[15px]">AI Analysis Complete</div><div class="text-blue-100 text-[12px] font-semibold">${a.confidence}% confidence • verified in 3.2s</div></div>
+      <span class="ml-auto text-[11px] font-extrabold bg-white text-brand-700 rounded-full px-3 py-1.5">CONFIRM ✓</span></div>
+    <div class="p-5 space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase tracking-wide">Category</div><div class="font-extrabold text-[14px] mt-0.5">${catIcon(a.category)} ${a.category}</div></div>
+        <div class="${urgBg} border rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase tracking-wide">Urgency</div><div class="font-extrabold text-[14px] mt-0.5" style="color:${urgColor}">● ${a.urgency}</div></div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase tracking-wide">Department</div><div class="font-extrabold text-[13px] mt-0.5">${a.department}</div><div class="text-[11px] text-slate-500 font-semibold">→ ${a.officer}</div></div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase tracking-wide">Est. Resolution</div><div class="font-extrabold text-[14px] mt-0.5 text-brand-600">${a.eta}</div><div class="text-[11px] text-slate-500 font-semibold">Sentiment: ${a.sentiment}</div></div>
+      </div>
+      <div class="bg-brand-50/60 border border-brand-100 rounded-xl p-3.5"><div class="text-[10.5px] font-extrabold text-brand-600 uppercase tracking-wide">✦ AI Summary (staff will see this)</div><div class="text-[13px] font-medium text-navy-800 mt-1 leading-relaxed italic">"${esc(a.summary)}"</div></div>
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase tracking-wide">Why this routing?</div><div class="text-[12.5px] font-medium text-slate-600 mt-1">${esc(a.reason)}</div><div class="flex flex-wrap gap-1.5 mt-2">${a.keywords.map(k=>`<span class="text-[11px] font-bold bg-white border border-slate-200 rounded-full px-2 py-0.5">#${esc(k)}</span>`).join('')}</div></div>
+      ${a.duplicates.length?`<div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5"><div class="font-extrabold text-[13px] text-amber-800">⚠ ${a.duplicates.length} similar complaint${a.duplicates.length>1?'s':''} detected</div>${a.duplicates.map(d=>`<div onclick="openDetail('${d.c.id}')" class="mt-2 bg-white border border-amber-200 rounded-lg p-2.5 cursor-pointer hover:shadow transition"><div class="font-bold text-[12.5px]">${esc(d.c.title)}</div><div class="text-[11px] font-bold text-amber-700">${d.c.id} • ${Math.round(d.sim*100)}% similar • ${d.c.status}</div></div>`).join('')}<div class="text-[11.5px] text-amber-700 font-semibold mt-2">You can still submit — AI will link them automatically.</div></div>`:`<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-[12.5px] font-bold text-emerald-700 flex items-center gap-2">✓ No duplicates found — this looks like a new issue</div>`}
+      <div class="bg-violet-50 border border-violet-100 rounded-xl p-3.5"><div class="text-[10.5px] font-extrabold text-violet-600 uppercase tracking-wide">Suggested next action for staff</div><div class="text-[12.5px] font-medium text-slate-700 mt-1">${esc(a.action)}</div></div>
+    </div></div>`;
+}
+function initNewForm(){onFormType(true);}
+function onFormType(silent){
+  const t=$('fTitle'),d=$('fDesc');if(!t||!d)return;
+  state.formDraft={title:t.value,desc:d.value,building:$('fBuilding').value,room:$('fRoom').value};
+  $('charCount').textContent=d.value.length+' characters';
+  clearTimeout(aiDebounce);
+  if(d.value.trim().length<20){$('aiPanelWrap').innerHTML=aiPanelHTML(null);state.lastAI=null;return;}
+  if(!silent)$('aiPanelWrap').innerHTML=aiPanelHTML(null,true);
+  aiDebounce=setTimeout(()=>{
+    const a=analyzeComplaint(t.value||'(untitled)',d.value,$('fBuilding').value+' '+$('fRoom').value);
+    state.lastAI=a;$('aiPanelWrap').innerHTML=aiPanelHTML(a);
+  }, silent?100:900);
+}
+function fakeUpload(el){el.innerHTML='<div class="text-[13.5px] font-bold text-brand-600">✓ photo-evidence.jpg uploaded (2.1 MB)</div><div class="text-[12px] text-slate-500 font-medium mt-1">AI vision: damage detected & attached to report</div>';toast('Photo uploaded','AI vision tagged: visible damage detected.');}
+function preSubmit(){
+  const t=$('fTitle').value.trim(),d=$('fDesc').value.trim();
+  if(t.length<8){toast('Title too short','Please write a clear title (min 8 characters).','warn');return;}
+  if(d.length<20){toast('Add more detail','Description needs at least 20 characters for AI analysis.','warn');return;}
+  const a=state.lastAI||analyzeComplaint(t,d,$('fBuilding').value+' '+$('fRoom').value);
+  $('confirmModal').classList.remove('hidden');$('confirmModal').classList.add('flex');
+  $('confirmContent').innerHTML=`
+    <div class="grad-bg px-6 py-5"><div class="font-display font-extrabold text-white text-[18px]">Confirm & Submit Complaint</div><div class="text-blue-100 text-[13px] font-medium">Please verify the AI analysis before submitting</div></div>
+    <div class="p-6">
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4"><div class="font-bold text-[14px]">${esc(t)}</div><div class="text-[12.5px] text-slate-500 font-medium mt-1">${esc($('fBuilding').value)}${$('fRoom').value?' • '+esc($('fRoom').value):''}</div></div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4 text-center">
+        ${[[catIcon(a.category)+' '+a.category,'Category'],['● '+a.urgency,'Urgency'],[a.department.split(' ')[0]+' dept','Routes to'],[a.eta,'ETA']].map(x=>`<div class="bg-brand-50/60 border border-brand-100 rounded-xl p-2.5"><div class="font-extrabold text-[12px]">${esc(x[0])}</div><div class="text-[10.5px] font-bold text-slate-400 uppercase">${x[1]}</div></div>`).join('')}
+      </div>
+      ${a.duplicates.length?`<div class="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-[12.5px] font-semibold text-amber-800">⚠ Will be linked with ${a.duplicates.length} similar report(s) for faster joint resolution.</div>`:''}
+      <div class="flex gap-3 mt-5"><button onclick="closeConfirm()" class="flex-1 btn-ghost rounded-xl py-3 font-bold text-[14px]">Edit Details</button><button onclick="finalSubmit()" class="flex-[2] btn-primary rounded-xl py-3 font-bold text-[14px]">✓ Confirm & Submit</button></div>
+    </div>`;
+}
+function closeConfirm(){$('confirmModal').classList.add('hidden');$('confirmModal').classList.remove('flex');}
+function finalSubmit(){
+  const a=state.lastAI;const t=$('fTitle').value.trim(),d=$('fDesc').value.trim();
+  const num=143+Math.floor(Math.random()*5);
+  const nc={id:`CMP-2026-0${num}`,title:t,desc:d,category:a.category,department:a.department,building:$('fBuilding').value+($('fRoom').value?' — '+$('fRoom').value:''),status:'Submitted',priority:a.urgency,date:'2026-10-02 '+new Date().toTimeString().slice(0,5),updated:'Just now',student:'Aarav Sharma',sid:'STU-2023-1847',assignee:a.officer,upvotes:0,aiSummary:a.summary,aiConf:a.confidence,sentiment:a.sentiment,eta:a.eta,feedback:null,timeline:[['Submitted','Just now',`AI triaged as ${a.urgency} • ${a.category} • routed to ${a.department}`]]};
+  state.complaints.unshift(nc);state.formDraft={title:'',desc:'',building:'',room:''};state.lastAI=null;
+  closeConfirm();renderNotifs();setTab('my');
+  toast('Complaint submitted!',`${nc.id} • Routed to ${nc.department} in 3.2s`,'success');
+  setTimeout(()=>openDetail(nc.id),600);
+}
+function studentTrack(){
+  const mine=myComplaints();
+  const sel=state.complaints.find(c=>c.id===state.selectedTrack)||mine[0];
+  state.selectedTrack=sel.id;
+  const steps=['Submitted','Under Review','Assigned','In Progress','Resolved'];
+  const idx = sel.status==='Closed'?5:steps.indexOf(sel.status==='Escalated'?'In Progress':sel.status);
+  return `
+  <div class="mb-5 fade-slide"><h1 class="display font-extrabold text-[26px]">Track Complaint Status</h1><p class="text-slate-500 text-[14px] font-medium">Live timeline with AI-verified updates from the assigned team.</p></div>
+  <div class="grid lg:grid-cols-3 gap-5">
+    <div class="card p-4 fade-slide"><div class="font-bold text-[13px] text-slate-500 uppercase tracking-wide px-2 mb-2">Select complaint</div>
+      <div class="space-y-2 max-h-[480px] overflow-y-auto">${mine.map(c=>`<div onclick="state.selectedTrack='${c.id}';renderTab()" class="p-3.5 rounded-xl border cursor-pointer transition ${c.id===sel.id?'border-brand-300 bg-brand-50/60 shadow':'border-slate-200 hover:border-brand-200'}"><div class="font-bold text-[13px] leading-snug">${esc(c.title.slice(0,60))}...</div><div class="flex items-center gap-2 mt-2">${statusBadge(c.status)}<span class="text-[11px] font-bold text-slate-400">${c.id}</span></div></div>`).join('')}</div></div>
+    <div class="lg:col-span-2 space-y-5">
+      <div class="card p-6 fade-slide">
+        <div class="flex flex-wrap items-start gap-3"><div class="w-12 h-12 rounded-2xl grad-soft border border-brand-100 flex items-center justify-center text-[24px]">${catIcon(sel.category)}</div>
+        <div class="flex-1 min-w-[200px]"><div class="font-display font-extrabold text-[18px] leading-snug">${esc(sel.title)}</div><div class="text-[12.5px] text-slate-500 font-semibold mt-1">${sel.id} • ${sel.category} • ${esc(sel.building)}</div></div>
+        <div class="flex gap-2">${statusBadge(sel.status)}${priBadge(sel.priority)}</div></div>
+        <div class="mt-6 relative">
+          <div class="absolute top-[18px] left-6 right-6 h-1 bg-slate-100 rounded-full"></div>
+          <div class="absolute top-[18px] left-6 h-1 grad-bg rounded-full transition-all" style="width:calc(${(idx)/(steps.length-1)*100}% - 48px + ${(idx>0?0:0)}px);max-width:calc(100% - 48px)"></div>
+          <div class="relative flex justify-between">${steps.map((s,i)=>`<div class="flex flex-col items-center gap-2 w-16"><div class="w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-[13px] border-2 ${i<=idx?'grad-bg text-white border-transparent shadow-lg shadow-blue-500/30':'bg-white text-slate-300 border-slate-200'}">${i<idx?'✓':i+1}</div><div class="text-[10px] font-extrabold text-center ${i<=idx?'text-navy-900':'text-slate-400'}">${s}</div></div>`).join('')}</div>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-3 mt-6">
+          <div class="bg-slate-50 rounded-xl p-3.5"><div class="text-[11px] font-extrabold text-slate-400 uppercase">Assigned Officer</div><div class="font-bold text-[13.5px] mt-1">👤 ${esc(sel.assignee)}</div><div class="text-[11.5px] text-emerald-600 font-bold">● Online now</div></div>
+          <div class="bg-slate-50 rounded-xl p-3.5"><div class="text-[11px] font-extrabold text-slate-400 uppercase">Expected Resolution</div><div class="font-bold text-[13.5px] mt-1 text-brand-600">${sel.eta}</div><div class="text-[11.5px] text-slate-500 font-semibold">AI-predicted • 91% on track</div></div>
+          <div class="bg-slate-50 rounded-xl p-3.5"><div class="text-[11px] font-extrabold text-slate-400 uppercase">Community</div><div class="font-bold text-[13.5px] mt-1">👍 ${sel.upvotes} upvotes</div><button onclick="upvote('${sel.id}')" class="text-[11.5px] text-brand-600 font-bold hover:underline">+ Upvote (same issue)</button></div>
+        </div>
+      </div>
+      <div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px] mb-5">Activity Timeline</div>
+        ${sel.timeline.map((t,i)=>`<div class="timeline-item relative flex gap-4 pb-7"><div class="timeline-line"></div><div class="w-10 h-10 rounded-full ${i===sel.timeline.length-1?'grad-bg text-white shadow-lg shadow-blue-500/30':'bg-slate-100 text-slate-400'} flex items-center justify-center font-extrabold text-[13px] shrink-0 z-10">${i===sel.timeline.length-1?'●':'✓'}</div><div class="flex-1 bg-slate-50 border border-slate-100 rounded-xl p-4"><div class="flex items-center justify-between gap-2"><span class="font-extrabold text-[13.5px]">${esc(t[0])}</span><span class="text-[11px] font-bold text-slate-400">${esc(t[1])}</span></div><div class="text-[13px] text-slate-600 font-medium mt-1">${esc(t[2])}</div></div></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+function upvote(id){const c=state.complaints.find(x=>x.id===id);c.upvotes++;renderTab();toast('Upvoted','Your vote helps prioritize this issue.');}
+function studentFeedback(){
+  const done=myComplaints().filter(c=>['Resolved','Closed'].includes(c.status));
+  return `
+  <div class="mb-5 fade-slide"><h1 class="display font-extrabold text-[26px]">Feedback & Ratings</h1><p class="text-slate-500 text-[14px] font-medium">Your ratings train the AI and recognize great staff work.</p></div>
+  <div class="grid lg:grid-cols-3 gap-5">
+    <div class="card p-6 text-center fade-slide"><div class="font-display font-extrabold text-[52px] grad-text">4.7</div><div class="text-amber-400 tracking-widest text-[18px]">★★★★★</div><div class="font-bold text-[14px] mt-2">Your avg. satisfaction</div><div class="text-[12.5px] text-slate-500 font-medium">Based on ${done.filter(c=>c.feedback).length} reviews</div><div class="progress-bar mt-4"><div class="progress-fill" style="width:94%"></div></div></div>
+    <div class="lg:col-span-2 space-y-4">${done.map(c=>`
+      <div class="card p-5 fade-slide"><div class="flex flex-wrap items-start gap-3"><div class="flex-1 min-w-[200px]"><div class="font-bold text-[14.5px]">${esc(c.title)}</div><div class="text-[12px] text-slate-500 font-semibold mt-1">${c.id} • Resolved by ${esc(c.assignee)} • ${c.updated}</div></div>${statusBadge(c.status)}</div>
+      <div class="flex items-center gap-1.5 mt-3">${[1,2,3,4,5].map(s=>`<span onclick="rate('${c.id}',${s})" class="star text-[26px] ${s<=(c.feedback||0)?'text-amber-400':'text-slate-200'}">★</span>`).join('')}<span class="ml-2 text-[13px] font-bold text-slate-500">${c.feedback?c.feedback+'/5 — Thank you!':'Tap to rate'}</span></div>
+      ${!c.feedback?`<textarea id="fb-${c.id}" placeholder="Optional: tell us what went well or could improve..." class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-[13px] mt-3 resize-none" rows="2"></textarea><button onclick="submitFb('${c.id}')" class="mt-2 btn-ghost rounded-xl px-4 py-2 text-[12.5px] font-bold">Submit written feedback</button>`:''}</div>`).join('')||'<div class="card p-10 text-center text-slate-400">No resolved complaints yet.</div>'}</div>
+  </div>`;
+}
+function rate(id,s){state.complaints.find(c=>c.id===id).feedback=s;renderTab();toast('Thanks for rating!',`You rated ${id} ${s} out of 5 stars.`);}
+function submitFb(id){const v=$('fb-'+id).value;if(!v.trim()){toast('Write something first','Please add a comment before submitting.','warn');return;}toast('Feedback submitted','Your comments were shared with the team.');}
+
+/* ==================================================================
+   STAFF VIEWS
+================================================================== */
+function staffQueue(){return state.complaints.filter(c=>!['Closed'].includes(c.status));}
+function staffOverview(){
+  const q=staffQueue();
+  const urgent=q.filter(c=>c.priority==='Critical'||c.status==='Escalated');
+  const open=q.length, sla=94;
+  return `
+  <div class="flex flex-col lg:flex-row lg:items-center gap-4 mb-6 fade-slide"><div><h1 class="display font-extrabold text-[26px] sm:text-[30px]">Staff Command Queue 🛠️</h1><p class="text-slate-500 text-[14px] font-medium">AI-prioritized workload • Electrical Maintenance • ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})}</p></div>
+  <div class="lg:ml-auto flex gap-2.5"><button onclick="setTab('inbox')" class="btn-ghost rounded-xl px-5 py-3 font-bold text-[13.5px]">Open Smart Inbox</button><button onclick="toast('AI Copilot','Drafting shift summary from today\\'s activity...','info')" class="btn-primary rounded-xl px-5 py-3 font-bold text-[13.5px]">✦ AI Shift Summary</button></div></div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 fade-slide">
+    ${[['Open Queue',open,'Across all departments','📥','#2563EB','bg-brand-50',open+' active'],['Urgent Attention',urgent.length,'Critical + escalated','🚨','#E11D48','bg-rose-50','Act now'],['My Assigned','6','Personally owned','👤','#7C3AED','bg-violet-50','2 due today'],['SLA Compliance',sla+'%','This month','✅','#059669','bg-emerald-50','▲ 3.1%']].map(s=>`
+    <div class="card p-5 card-hover"><div class="flex items-center justify-between"><div class="w-10 h-10 rounded-xl ${s[5]} flex items-center justify-center text-[18px]">${s[3]}</div><span class="text-[11px] font-extrabold text-slate-500 bg-slate-100 rounded-full px-2 py-0.5">${s[6]}</span></div><div class="stat-num font-display font-extrabold text-[30px] mt-3">${s[1]}</div><div class="font-bold text-[13.5px]">${s[0]}</div><div class="text-[12px] text-slate-500 font-medium">${s[2]}</div></div>`).join('')}
+  </div>
+  ${urgent.length?`<div class="card mt-5 p-0 overflow-hidden !border-rose-200 fade-slide"><div class="bg-gradient-to-r from-rose-600 to-orange-500 px-6 py-3.5 flex items-center gap-2.5"><span class="w-2.5 h-2.5 bg-white rounded-full pulse-dot"></span><span class="font-display font-extrabold text-white text-[15px]">🚨 Urgent Attention Required (${urgent.length})</span><button onclick="setTab('urgent')" class="ml-auto text-[12.5px] font-extrabold bg-white text-rose-600 rounded-lg px-3.5 py-1.5">Handle Now →</button></div>
+  <div class="divide-y divide-slate-50">${urgent.slice(0,3).map(c=>`<div onclick="openDetail('${c.id}')" class="px-6 py-4 flex flex-wrap items-center gap-3 hover:bg-rose-50/50 cursor-pointer transition"><span class="text-[22px]">${catIcon(c.category)}</span><div class="flex-1 min-w-[220px]"><div class="font-bold text-[14px]">${esc(c.title)}</div><div class="text-[12px] text-slate-500 font-semibold">${c.id} • ${esc(c.building)} • ${c.updated}</div></div>${priBadge(c.priority)}${statusBadge(c.status)}<span class="text-[13px] font-bold text-brand-600">Open →</span></div>`).join('')}</div></div>`:''}
+  <div class="card mt-5 p-0 overflow-hidden fade-slide">
+    <div class="flex flex-wrap items-center gap-3 px-6 py-4 border-b border-slate-100"><div class="font-display font-bold text-[16px]">Today's Priority Queue</div><span class="text-[11.5px] font-extrabold text-brand-600 bg-brand-50 border border-brand-100 rounded-full px-2.5 py-1">✦ AI-SORTED BY IMPACT</span>
+    <div class="ml-auto flex gap-2">${['all','mine','unassigned'].map(f=>`<button onclick="state.staffFilter='${f}';renderTab()" class="text-[12.5px] font-bold rounded-lg px-3.5 py-2 transition ${state.staffFilter===f?'grad-bg text-white shadow':'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${f==='all'?'All':f==='mine'?'Assigned to me':'Unassigned'}</button>`).join('')}</div></div>
+    <div class="overflow-x-auto"><table class="w-full text-left min-w-[760px]"><thead><tr class="text-[11px] font-extrabold tracking-wider text-slate-400 uppercase border-b border-slate-100"><th class="px-6 py-3">Complaint</th><th class="px-4 py-3">AI Priority</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Assignee</th><th class="px-6 py-3 text-right">Actions</th></tr></thead>
+    <tbody>${q.filter(c=>state.staffFilter==='all'?true:state.staffFilter==='mine'?c.assignee==='Rahul Verma':c.assignee==='Unassigned').slice(0,8).map(c=>`<tr class="border-b border-slate-50 table-row-hover transition"><td class="px-6 py-3.5"><div class="font-bold text-[13.5px] max-w-[320px]">${esc(c.title)}</div><div class="text-[11.5px] text-slate-500 font-semibold mt-0.5">${c.id} • ${c.category} • 👍 ${c.upvotes}</div></td><td class="px-4 py-3.5">${priBadge(c.priority)}<div class="text-[10.5px] font-bold text-slate-400 mt-1">AI ${c.aiConf}%</div></td><td class="px-4 py-3.5">${statusBadge(c.status)}</td><td class="px-4 py-3.5 text-[12.5px] font-bold">${esc(c.assignee)}</td><td class="px-6 py-3.5 text-right whitespace-nowrap"><button onclick="openDetail('${c.id}')" class="text-[12.5px] font-bold text-brand-600 hover:underline">Manage</button></td></tr>`).join('')}</tbody></table></div>
+  </div>`;
+}
+function staffInbox(){
+  const q=staffQueue();
+  const cols=[['Submitted & Review',['Submitted','Under Review']],['Assigned',['Assigned']],['In Progress',['In Progress','Escalated']],['Resolved',['Resolved','Closed']]];
+  return `
+  <div class="mb-5 fade-slide"><h1 class="display font-extrabold text-[26px]">Smart Inbox</h1><p class="text-slate-500 text-[14px] font-medium">Drag-free Kanban — click any card to manage with AI Copilot.</p></div>
+  <div class="flex gap-4 overflow-x-auto pb-4 fade-slide">${cols.map(col=>`
+    <div class="kanban-col bg-slate-100/70 rounded-2xl p-3 shrink-0 w-[300px]">
+      <div class="flex items-center justify-between px-2 py-1.5 mb-2"><span class="font-extrabold text-[13px]">${col[0]}</span><span class="text-[11px] font-extrabold bg-white border border-slate-200 rounded-full px-2.5 py-0.5">${q.filter(c=>col[1].includes(c.status)).length}</span></div>
+      <div class="space-y-2.5 max-h-[560px] overflow-y-auto">${q.filter(c=>col[1].includes(c.status)).map(c=>`
+        <div onclick="openDetail('${c.id}')" class="bg-white rounded-xl border border-slate-200 p-3.5 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition shadow-sm">
+          <div class="flex items-center gap-2">${priBadge(c.priority)}<span class="text-[10.5px] font-bold text-slate-400 ml-auto">${c.id}</span></div>
+          <div class="font-bold text-[13px] mt-2 leading-snug">${esc(c.title.slice(0,80))}${c.title.length>80?'...':''}</div>
+          <div class="text-[11.5px] text-slate-500 font-semibold mt-1.5 flex items-center gap-1.5"><span>${catIcon(c.category)}</span> ${c.category} • ${esc(c.building.split('—')[0])}</div>
+          <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-100"><span class="text-[11px] font-bold text-slate-500">👤 ${esc(c.assignee.split(' ')[0])} ${esc(c.assignee.split(' ')[1]||'')}</span><span class="text-[11px] font-bold text-slate-400">${c.updated}</span></div>
+        </div>`).join('')||'<div class="text-center text-[12px] font-semibold text-slate-400 py-6">No items</div>'}</div>
+    </div>`).join('')}</div>`;
+}
+function staffUrgent(){
+  const u=state.complaints.filter(c=>c.priority==='Critical'||c.status==='Escalated'||c.priority==='High').slice(0,6);
+  return `
+  <div class="mb-5 fade-slide"><h1 class="display font-extrabold text-[26px]">🚨 Urgent Attention</h1><p class="text-slate-500 text-[14px] font-medium">Critical & escalated items ranked by AI impact score.</p></div>
+  <div class="space-y-4">${u.map((c,i)=>`
+    <div class="card p-5 !border-l-4 fade-slide" style="border-left-color:${c.priority==='Critical'?'#E11D48':'#EA580C'}">
+      <div class="flex flex-wrap items-start gap-4"><div class="w-11 h-11 rounded-xl ${c.priority==='Critical'?'bg-rose-600':'bg-orange-500'} text-white font-extrabold flex items-center justify-center text-[16px] shadow-lg">#${i+1}</div>
+      <div class="flex-1 min-w-[240px]"><div class="font-display font-extrabold text-[16px]">${esc(c.title)}</div><div class="text-[12.5px] text-slate-500 font-semibold mt-1">${c.id} • ${c.category} • ${esc(c.building)} • 👍 ${c.upvotes} students affected</div>
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 mt-3 text-[13px] font-medium text-slate-700 italic">"${esc(c.aiSummary)}"</div>
+      <div class="flex flex-wrap gap-2 mt-3">${priBadge(c.priority)}${statusBadge(c.status)}<span class="text-[11.5px] font-extrabold text-rose-600 bg-rose-50 border border-rose-200 rounded-full px-2.5 py-1">⏱ SLA: ${c.eta}</span></div></div>
+      <div class="flex flex-col gap-2 shrink-0 w-full sm:w-[180px]"><button onclick="openDetail('${c.id}')" class="btn-primary rounded-xl py-2.5 font-bold text-[13px]">Manage Now</button><button onclick="escalate('${c.id}')" class="btn-ghost rounded-xl py-2.5 font-bold text-[13px]">Escalate ↑</button><button onclick="toast('Officer notified','Backup officer requested for ${c.id}.','info')" class="btn-ghost rounded-xl py-2.5 font-bold text-[13px]">Request Backup</button></div></div>
+    </div>`).join('')}</div>`;
+}
+function staffPerf(){
+  return `
+  <div class="mb-5 fade-slide"><h1 class="display font-extrabold text-[26px]">My Performance</h1><p class="text-slate-500 text-[14px] font-medium">Rahul Verma • Electrical Maintenance • September 2026</p></div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 fade-slide">
+    ${[['Resolved','48','+8 this week','✅'],['Avg. Handle Time','5.2h','▲ 18% faster','⚡'],['CSAT Score','4.8★','Top 5% officers','⭐'],['SLA Adherence','97%','▲ 2.4%','🎯']].map(s=>`<div class="card p-5"><div class="text-[22px]">${s[3]}</div><div class="stat-num font-display font-extrabold text-[28px] mt-2">${s[1]}</div><div class="font-bold text-[13px]">${s[0]}</div><div class="text-[11.5px] font-bold text-emerald-600">${s[2]}</div></div>`).join('')}
+  </div>
+  <div class="grid lg:grid-cols-2 gap-5 mt-5">
+    <div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px]">Weekly Resolutions</div><div class="h-[240px] mt-4"><canvas id="perfBar"></canvas></div></div>
+    <div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px]">✦ AI Coaching Insights</div>
+      <div class="space-y-3 mt-4">
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4"><div class="font-extrabold text-[13.5px] text-emerald-800">✓ Strength: Critical response</div><div class="text-[13px] text-emerald-700 font-medium mt-1">You respond to Critical tickets 2.1× faster than team average. Keep it up!</div></div>
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4"><div class="font-extrabold text-[13.5px] text-amber-800">⚠ Opportunity: Status updates</div><div class="text-[13px] text-amber-700 font-medium mt-1">Students rate 0.6★ higher when you post 2+ progress updates. AI can auto-draft them.</div><button onclick="toast('AI Copilot','Auto-update drafts enabled for your queue.','info')" class="mt-2 text-[12.5px] font-extrabold text-amber-800 underline">Enable auto-drafts →</button></div>
+        <div class="bg-brand-50 border border-brand-100 rounded-xl p-4"><div class="font-extrabold text-[13.5px] text-brand-800">✦ Suggested focus this week</div><div class="text-[13px] text-brand-700 font-medium mt-1">3 aging Medium tickets in Block B could breach SLA. Clear them to hit 99%.</div></div>
+      </div></div>
+  </div>`;
+}
+function initStaffPerfCharts(){
+  const ctx=$('perfBar');if(!ctx)return;
+  charts.pb=new Chart(ctx,{type:'bar',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:[6,9,7,11,8,4,3],backgroundColor:['#DBEAFE','#DBEAFE','#93C5FD','#2563EB','#93C5FD','#E0E7FF','#E0E7FF'],borderRadius:8}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:'#F1F5F9'},ticks:{font:{size:11,weight:'bold'}}},x:{grid:{display:false},ticks:{font:{size:11,weight:'bold'}}}},maintainAspectRatio:false}});
+}
+function escalate(id){const c=state.complaints.find(x=>x.id===id);c.status='Escalated';c.updated='Just now';c.timeline.push(['Escalated','Just now','Escalated by Rahul Verma — flagged for admin review.']);renderTab();toast('Escalated',`${id} flagged for admin review.`,'warn');}
+
+/* ==================================================================
+   ADMIN VIEWS
+================================================================== */
+function adminOverview(){
+  const total=state.complaints.length, open=state.complaints.filter(c=>!['Resolved','Closed'].includes(c.status)).length;
+  const res=state.complaints.filter(c=>['Resolved','Closed'].includes(c.status)).length;
+  return `
+  <div class="flex flex-col lg:flex-row lg:items-center gap-4 mb-6 fade-slide"><div><h1 class="display font-extrabold text-[26px] sm:text-[30px]">Campus Command Center 📊</h1><p class="text-slate-500 text-[14px] font-medium">Northbridge University • 12,400 students • Live as of ${new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</p></div>
+  <div class="lg:ml-auto flex gap-2.5"><select onchange="toast('Range changed','Analytics refreshing for '+this.value,'info')" class="border border-slate-200 rounded-xl px-4 py-3 text-[13px] font-bold bg-white"><option>Last 30 days</option><option>Last 7 days</option><option>This semester</option></select><button onclick="toast('Report exported','Campus-health-report-Sep-2026.pdf downloaded.')" class="btn-primary rounded-xl px-5 py-3 font-bold text-[13.5px]">⬇ Export Report</button></div></div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 fade-slide">
+    ${[['Total Complaints','1,284','▲ 8.2% vs Aug','📋','bg-brand-50'],['Resolution Rate','93.4%','▲ 4.1 pts','✅','bg-emerald-50'],['Avg. Resolve Time','1.9 days','▼ from 6.2 days','⚡','bg-violet-50'],['Student CSAT','4.6 / 5','▲ 0.3 pts','⭐','bg-amber-50']].map(s=>`
+    <div class="card p-5 card-hover"><div class="flex items-center justify-between"><div class="w-10 h-10 rounded-xl ${s[4]} flex items-center justify-center text-[18px]">${s[3]}</div></div><div class="stat-num font-display font-extrabold text-[28px] mt-3">${s[1]}</div><div class="font-bold text-[13.5px]">${s[0]}</div><div class="text-[11.5px] font-bold text-emerald-600 mt-0.5">${s[2]}</div></div>`).join('')}
+  </div>
+  <div class="grid lg:grid-cols-3 gap-5 mt-5">
+    <div class="lg:col-span-2 card p-6 fade-slide"><div class="flex items-center justify-between"><div class="font-display font-bold text-[16px]">Complaint Volume & Resolution Trend</div><div class="flex gap-3 text-[11.5px] font-bold"><span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-brand-600"></span> Filed</span><span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Resolved</span></div></div><div class="h-[260px] mt-4"><canvas id="admTrend"></canvas></div></div>
+    <div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px]">By Category</div><div class="h-[220px] mt-4"><canvas id="admCat"></canvas></div><div class="mt-3 text-[12px] font-bold text-slate-500 text-center">Top: Electrical (24%) • Plumbing (18%)</div></div>
+  </div>
+  <div class="grid lg:grid-cols-3 gap-5 mt-5">
+    <div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px]">✦ AI Insights Feed</div>
+      <div class="space-y-3 mt-4">
+        <div class="flex gap-3 bg-rose-50 border border-rose-200 rounded-xl p-3.5"><span class="text-[18px]">🔥</span><div><div class="font-extrabold text-[13px] text-rose-800">Anomaly: Canteen complaints +180%</div><div class="text-[12.5px] text-rose-700 font-medium">4 food-safety reports in 7 days. Recommend hygiene audit this week.</div></div></div>
+        <div class="flex gap-3 bg-brand-50 border border-brand-100 rounded-xl p-3.5"><span class="text-[18px]">🔗</span><div><div class="font-extrabold text-[13px] text-brand-800">Pattern: Block C electrical cluster</div><div class="text-[12.5px] text-brand-700 font-medium">3 linked outages suggest transformer fault. Joint work order created.</div></div></div>
+        <div class="flex gap-3 bg-emerald-50 border border-emerald-200 rounded-xl p-3.5"><span class="text-[18px]">📈</span><div><div class="font-extrabold text-[13px] text-emerald-800">Win: Housekeeping SLA at 97%</div><div class="text-[12.5px] text-emerald-700 font-medium">Fastest team this month. Consider sharing their playbook.</div></div></div>
+        <div class="flex gap-3 bg-amber-50 border border-amber-200 rounded-xl p-3.5"><span class="text-[18px]">⏱</span><div><div class="font-extrabold text-[13px] text-amber-800">Forecast: IT load spike Monday</div><div class="text-[12.5px] text-amber-700 font-medium">Assignment deadlines predict +40% network tickets. Pre-staff support.</div></div></div>
+      </div></div>
+    <div class="lg:col-span-2 card p-0 overflow-hidden fade-slide">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100"><div class="font-display font-bold text-[16px]">Department Performance</div><button onclick="setTab('departments')" class="text-[13px] font-bold text-brand-600 hover:underline">View all →</button></div>
+      <div class="overflow-x-auto"><table class="w-full text-left min-w-[520px]"><thead><tr class="text-[11px] font-extrabold tracking-wider text-slate-400 uppercase border-b border-slate-100"><th class="px-6 py-3">Department</th><th class="px-4 py-3">Open</th><th class="px-4 py-3">SLA</th><th class="px-4 py-3">Load</th><th class="px-6 py-3">Health</th></tr></thead><tbody>
+      ${DEPARTMENTS.slice(0,6).map(d=>`<tr class="border-b border-slate-50 table-row-hover"><td class="px-6 py-3.5"><div class="flex items-center gap-2.5"><span class="text-[18px]">${d.icon}</span><span class="font-bold text-[13.5px]">${d.name}</span></div></td><td class="px-4 py-3.5 font-extrabold text-[14px]">${d.open}</td><td class="px-4 py-3.5"><span class="text-[12.5px] font-extrabold ${d.sla>=94?'text-emerald-600':d.sla>=90?'text-amber-600':'text-rose-600'}">${d.sla}%</span></td><td class="px-4 py-3.5"><span class="text-[11px] font-extrabold rounded-full px-2.5 py-1 ${d.load==='High'?'bg-rose-50 text-rose-600':d.load==='Normal'?'bg-brand-50 text-brand-600':'bg-emerald-50 text-emerald-600'}">${d.load}</span></td><td class="px-6 py-3.5 w-[160px]"><div class="progress-bar"><div class="progress-fill" style="width:${d.sla}%"></div></div></td></tr>`).join('')}</tbody></table></div>
+    </div>
+  </div>
+  <div class="card mt-5 p-6 fade-slide"><div class="font-display font-bold text-[16px]">🔥 Campus Heatmap — Complaints by Building (this month)</div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 mt-4">${[['Block C',42,'#DC2626'],['Library',35,'#EA580C'],['Hostel B',28,'#F59E0B'],['Block A',22,'#F59E0B'],['Canteen',19,'#FBBF24'],['Block B',15,'#93C5FD'],['Hostel A',12,'#BFDBFE'],['Parking N',9,'#DBEAFE'],['Seminar',7,'#DBEAFE'],['Reading H.',6,'#EFF6FF'],['Science Bl.',5,'#EFF6FF'],['Sports',4,'#EFF6FF'],['Admin',3,'#F8FAFC'],['Route 7',8,'#DBEAFE']].map(h=>`<div class="heat-cell rounded-xl p-3 text-center border border-slate-200" style="background:${h[2]}22"><div class="font-extrabold text-[20px]" style="color:${h[2]}">${h[1]}</div><div class="text-[11px] font-bold text-slate-600">${h[0]}</div></div>`).join('')}</div>
+    <div class="text-[12px] font-semibold text-slate-500 mt-3">Darker = more complaints • AI auto-flags clusters above 25 for preventive maintenance.</div></div>`;
+}
+function initAdminCharts(){
+  const t=$('admTrend');
+  if(t)charts.at=new Chart(t,{type:'line',data:{labels:['Sep 8','Sep 12','Sep 16','Sep 20','Sep 24','Sep 28','Oct 2'],datasets:[{label:'Filed',data:[42,55,48,71,63,58,74],borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:.45,borderWidth:3,pointRadius:4,pointBackgroundColor:'#2563EB'},{label:'Resolved',data:[38,50,52,64,60,62,69],borderColor:'#059669',backgroundColor:'rgba(5,150,105,.06)',fill:true,tension:.45,borderWidth:3,pointRadius:4,pointBackgroundColor:'#059669'}]},options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:'#F1F5F9'},ticks:{font:{size:11,weight:'bold'}}},x:{grid:{display:false},ticks:{font:{size:11,weight:'bold'}}}},maintainAspectRatio:false}});
+  const c=$('admCat');
+  if(c)charts.ac=new Chart(c,{type:'doughnut',data:{labels:['Electrical','Plumbing','Network','Cleanliness','Canteen','Others'],datasets:[{data:[24,18,15,12,11,20],backgroundColor:['#F59E0B','#0EA5E9','#6366F1','#10B981','#EC4899','#CBD5E1'],borderWidth:3,borderColor:'#fff'}]},options:{cutout:'62%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10,weight:'bold'}}}},maintainAspectRatio:false}});
+}
+function adminAnalytics(){
+  return `
+  <div class="mb-5 fade-slide"><h1 class="display font-extrabold text-[26px]">Analytics & Insights</h1><p class="text-slate-500 text-[14px] font-medium">Deep-dive into resolution health, SLA risk and student sentiment.</p></div>
+  <div class="grid lg:grid-cols-2 gap-5">
+    <div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px]">Avg. Resolution Time by Department (days)</div><div class="h-[250px] mt-4"><canvas id="anBar"></canvas></div></div>
+    <div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px]">Status Distribution</div><div class="h-[250px] mt-4"><canvas id="anStatus"></canvas></div></div>
+    <div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px]">Student Sentiment Trend</div><div class="h-[230px] mt-4"><canvas id="anSent"></canvas></div>
+      <div class="grid grid-cols-4 gap-2 mt-4 text-center">${[['😊 Happy','61%','#059669'],['😐 Neutral','24%','#64748B'],['😟 Worried','10%','#D97706'],['😠 Angry','5%','#E11D48']].map(s=>`<div class="bg-slate-50 rounded-xl py-2.5"><div class="text-[16px]">${s[0].split(' ')[0]}</div><div class="font-extrabold text-[13px]" style="color:${s[2]}">${s[1]}</div><div class="text-[10.5px] font-bold text-slate-500">${s[0].split(' ')[1]}</div></div>`).join('')}</div></div>
+    <div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px]">✦ AI Recommendations</div>
+      <div class="space-y-3 mt-4">
+        ${[['Preventive maintenance: Block C transformer','Predicted 78% chance of repeat outage within 14 days. Schedule inspection this weekend. Estimated savings: 22 tickets.','rose'],['Rebalance IT support for Monday spike','Assignment deadlines historically spike network tickets 40%. Add 2 temp support staff 9am–2pm.','amber'],['Recognize Housekeeping team','97% SLA + 4.8 CSAT for 3 straight months. Feature in campus newsletter to boost morale.','emerald'],['Review canteen vendor contract','Food complaints up 180% with repeated hygiene flags. Trigger penalty clause & backup vendor RFP.','brand']].map(r=>`
+        <div class="border border-slate-200 rounded-xl p-4 hover:shadow-md transition"><div class="font-extrabold text-[13.5px]">${r[0]}</div><div class="text-[12.5px] text-slate-500 font-medium mt-1">${r[1]}</div><div class="flex gap-2 mt-2.5"><button onclick="toast('Approved','Recommendation actioned & logged.')" class="text-[12px] font-extrabold text-white grad-bg rounded-lg px-3.5 py-1.5">Approve Action</button><button onclick="toast('Snoozed','Will remind you in 7 days.','info')" class="text-[12px] font-bold text-slate-500 hover:text-navy-900">Snooze</button></div></div>`).join('')}
+      </div></div>
+  </div>`;
+}
+function initAnalyticsCharts(){
+  const b=$('anBar');
+  if(b)charts.ab=new Chart(b,{type:'bar',data:{labels:['Security','Housekeep','Library','Transport','Electrical','Plumbing','IT/Net','Civil'],datasets:[{data:[0.8,1.1,1.2,1.6,1.9,2.2,2.6,3.4],backgroundColor:['#059669','#10B981','#0EA5E9','#14B8A6','#F59E0B','#F97316','#6366F1','#E11D48'],borderRadius:8}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'#F1F5F9'},ticks:{font:{size:11,weight:'bold'}}},y:{grid:{display:false},ticks:{font:{size:11,weight:'bold'}}}},maintainAspectRatio:false}});
+  const s=$('anStatus');
+  if(s)charts.as=new Chart(s,{type:'doughnut',data:{labels:['Resolved','In Progress','Assigned','Under Review','Submitted','Escalated'],datasets:[{data:[38,22,12,11,13,4],backgroundColor:['#059669','#2563EB','#6366F1','#F59E0B','#94A3B8','#E11D48'],borderWidth:3,borderColor:'#fff'}]},options:{cutout:'60%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10,weight:'bold'}}}},maintainAspectRatio:false}});
+  const n=$('anSent');
+  if(n)charts.an=new Chart(n,{type:'line',data:{labels:['W1','W2','W3','W4','W5','W6'],datasets:[{label:'Positive',data:[52,55,58,60,63,68],borderColor:'#059669',tension:.45,borderWidth:3,pointRadius:3},{label:'Negative',data:[22,19,17,15,12,9],borderColor:'#E11D48',tension:.45,borderWidth:3,pointRadius:3}]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11,weight:'bold'}}}},scales:{y:{grid:{color:'#F1F5F9'},ticks:{font:{size:11,weight:'bold'}}},x:{grid:{display:false},ticks:{font:{size:11,weight:'bold'}}}},maintainAspectRatio:false}});
+}
+function adminDepts(){
+  return `
+  <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-5 fade-slide"><div><h1 class="display font-extrabold text-[26px]">Departments</h1><p class="text-slate-500 text-[14px] font-medium">${DEPARTMENTS.length} service teams • AI-balanced workloads</p></div><button onclick="toast('Department added','New team onboarding flow started.')" class="btn-primary rounded-xl px-5 py-3 font-bold text-[13.5px] sm:ml-auto">+ Add Department</button></div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">${DEPARTMENTS.map(d=>`
+    <div class="card card-hover p-5 fade-slide"><div class="flex items-start justify-between"><div class="w-11 h-11 rounded-xl flex items-center justify-center text-[22px]" style="background:${d.color}18">${d.icon}</div><span class="text-[11px] font-extrabold rounded-full px-2.5 py-1 ${d.load==='High'?'bg-rose-50 text-rose-600':d.load==='Normal'?'bg-brand-50 text-brand-600':'bg-emerald-50 text-emerald-600'}">${d.load} load</span></div>
+    <div class="font-display font-extrabold text-[16px] mt-3">${d.name}</div>
+    <div class="flex gap-4 mt-2 text-[12px] font-bold text-slate-500"><span><b class="text-navy-900 text-[15px]">${d.open}</b> open</span><span><b class="${d.sla>=94?'text-emerald-600':d.sla>=90?'text-amber-600':'text-rose-600'} text-[15px]">${d.sla}%</b> SLA</span></div>
+    <div class="progress-bar mt-3"><div class="progress-fill" style="width:${d.sla}%;background:${d.color}"></div></div>
+    <div class="flex gap-2 mt-4"><button onclick="toast('${d.short}','Opening ${d.name} queue...','info')" class="flex-1 btn-ghost rounded-xl py-2 text-[12.5px] font-bold">View Queue</button><button onclick="toast('Rebalanced','AI redistributed 3 tickets from ${d.short}.')" class="flex-1 btn-ghost rounded-xl py-2 text-[12.5px] font-bold">✦ Rebalance</button></div></div>`).join('')}</div>`;
+}
+function adminUsers(){
+  const users=[['Aarav Sharma','STU-2023-1847','Student • CSE','https://i.pravatar.cc/60?img=13','Active',7],['Sneha Patel','STU-2024-0921','Student • ECE','https://i.pravatar.cc/60?img=47','Active',4],['Rohan Das','STU-2023-1102','Student • ME','https://i.pravatar.cc/60?img=59','Active',5],['Rahul Verma','STF-2019-042','Officer • Electrical','https://i.pravatar.cc/60?img=12','Active',48],['Priya Nair','STF-2020-118','Officer • IT & Network','https://i.pravatar.cc/60?img=45','Active',52],['Suresh Kumar','STF-2018-031','Officer • Plumbing','https://i.pravatar.cc/60?img=53','On leave',31],['Meena Joshi','STF-2021-204','Officer • Housekeeping','https://i.pravatar.cc/60?img=44','Active',61],['Dr. Meera Nair','ADM-2015-003','Admin • Operations','https://i.pravatar.cc/60?img=32','Active','—']];
+  return `
+  <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-5 fade-slide"><div><h1 class="display font-extrabold text-[26px]">Users & Roles</h1><p class="text-slate-500 text-[14px] font-medium">12,400 students • 86 staff • 6 admins</p></div><button onclick="toast('Invite sent','Onboarding email sent to new user.')" class="btn-primary rounded-xl px-5 py-3 font-bold text-[13.5px] sm:ml-auto">+ Invite User</button></div>
+  <div class="card p-0 overflow-hidden fade-slide"><div class="overflow-x-auto"><table class="w-full text-left min-w-[680px]"><thead><tr class="text-[11px] font-extrabold tracking-wider text-slate-400 uppercase border-b border-slate-100"><th class="px-6 py-3">User</th><th class="px-4 py-3">Role</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Resolved</th><th class="px-6 py-3 text-right">Actions</th></tr></thead><tbody>
+  ${users.map(u=>`<tr class="border-b border-slate-50 table-row-hover"><td class="px-6 py-3.5"><div class="flex items-center gap-3"><img src="${u[3]}" class="w-9 h-9 rounded-full"/><div><div class="font-bold text-[13.5px]">${u[0]}</div><div class="text-[11.5px] text-slate-500 font-semibold">${u[1]}</div></div></div></td><td class="px-4 py-3.5 text-[12.5px] font-bold text-slate-600">${u[2]}</td><td class="px-4 py-3.5"><span class="text-[11px] font-extrabold rounded-full px-2.5 py-1 ${u[4]==='Active'?'bg-emerald-50 text-emerald-700':'bg-amber-50 text-amber-700'}">● ${u[4]}</span></td><td class="px-4 py-3.5 font-extrabold text-[14px]">${u[5]}</td><td class="px-6 py-3.5 text-right"><button onclick="toast('User profile','Opening ${u[0]}...','info')" class="text-[12.5px] font-bold text-brand-600 hover:underline">Manage</button></td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function adminReports(){
+  return `
+  <div class="mb-5 fade-slide"><h1 class="display font-extrabold text-[26px]">Reports & Audit Log</h1><p class="text-slate-500 text-[14px] font-medium">Compliance-ready exports and full activity trail.</p></div>
+  <div class="grid lg:grid-cols-3 gap-5">
+    <div class="lg:col-span-2 card p-6 fade-slide"><div class="font-display font-bold text-[16px]">Recent Activity</div>
+      <div class="mt-4 space-y-3">${[['AI Engine','Auto-merged 3 duplicate WiFi reports in Library zone','2h ago','#7C3AED'],['Rahul Verma','Updated CMP-2026-0142 → In Progress (technician dispatched)','3h ago','#2563EB'],['System','SLA breach warning issued for CMP-2026-0122','4h ago','#D97706'],['Dr. Meera Nair','Approved preventive maintenance for Block C','6h ago','#059669'],['AI Engine','Escalated CMP-2026-0135 — food-safety pattern detected','1d ago','#E11D48'],['Priya Nair','Resolved CMP-2026-0129 (fan replacement verified)','2d ago','#059669']].map(a=>`<div class="flex gap-3 items-start bg-slate-50 border border-slate-100 rounded-xl p-3.5"><div class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0" style="background:${a[3]}"></div><div class="flex-1"><div class="font-bold text-[13px]">${a[0]} <span class="font-medium text-slate-500">— ${a[1]}</span></div></div><span class="text-[11px] font-bold text-slate-400 shrink-0">${a[2]}</span></div>`).join('')}</div></div>
+    <div class="space-y-5"><div class="card p-6 fade-slide"><div class="font-display font-bold text-[16px]">Generate Reports</div>
+      <div class="space-y-2.5 mt-4">${[['📄 Monthly SLA Report','PDF • 12 pages'],['📊 Department Scorecard','Excel • Q3 2026'],['😊 CSAT & Sentiment Digest','PDF • Weekly'],['🔍 AI Audit Trail','CSV • Full log']].map(r=>`<div class="flex items-center gap-3 border border-slate-200 rounded-xl p-3 hover:border-brand-300 hover:bg-brand-50/50 transition cursor-pointer" onclick="toast('Downloading','${r[0]} export started.')"><span class="text-[20px]">${r[0].split(' ')[0]}</span><div class="flex-1"><div class="font-bold text-[13px]">${r[0].slice(2)}</div><div class="text-[11px] text-slate-500 font-semibold">${r[1]}</div></div><span class="text-brand-600 font-bold">⬇</span></div>`).join('')}</div></div>
+      <div class="card p-6 grad-soft !border-brand-100 fade-slide"><div class="font-display font-bold text-[15px]">✦ AI Board Summary</div><p class="text-[13px] text-slate-600 font-medium mt-2">"September was our strongest month: 93.4% SLA, 1.9-day median resolution, and canteen anomaly contained. Recommend Block C infra investment."</p><button onclick="toast('Copied','Board summary copied to clipboard.')" class="mt-3 btn-primary rounded-xl px-4 py-2.5 text-[12.5px] font-bold w-full">Copy for Board Deck</button></div></div>
+  </div>`;
+}
+
+/* ==================================================================
+   DETAIL DRAWER
+================================================================== */
+function openDetail(id){
+  const c=state.complaints.find(x=>x.id===id);if(!c)return;
+  const isStaff=state.role!=='student';
+  $('detailOverlay').classList.remove('hidden');
+  requestAnimationFrame(()=>$('detailPanel').classList.remove('translate-x-full'));
+  $('detailContent').innerHTML=`
+  <div class="bg-white border-b border-slate-200 px-6 py-5 sticky top-0 z-10">
+    <div class="flex items-center gap-3"><button onclick="closeDetail()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center font-bold transition">←</button>
+    <div class="flex-1"><div class="font-display font-extrabold text-[16px]">${c.id}</div><div class="text-[12px] text-slate-500 font-semibold">Filed ${esc(c.date)} • ${esc(c.student)}</div></div>
+    <button onclick="toast('Link copied','Shareable tracking link copied.')" class="p-2.5 rounded-xl border border-slate-200 hover:border-brand-300 transition text-[15px]">🔗</button></div>
+  </div>
+  <div class="p-5 space-y-4">
+    <div class="bg-white rounded-2xl border border-slate-200 p-5">
+      <div class="flex flex-wrap gap-2">${statusBadge(c.status)}${priBadge(c.priority)}<span class="text-[11px] font-extrabold bg-slate-100 text-slate-600 rounded-full px-2.5 py-1">${catIcon(c.category)} ${c.category}</span></div>
+      <h2 class="font-display font-extrabold text-[19px] mt-3 leading-snug">${esc(c.title)}</h2>
+      <p class="text-slate-600 text-[13.5px] mt-2.5 leading-relaxed">${esc(c.desc)}</p>
+      <div class="grid grid-cols-2 gap-2.5 mt-4 text-[12.5px]">
+        <div class="bg-slate-50 rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase">Location</div><div class="font-bold mt-0.5">📍 ${esc(c.building)}</div></div>
+        <div class="bg-slate-50 rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase">Department</div><div class="font-bold mt-0.5">🏢 ${esc(c.department)}</div></div>
+        <div class="bg-slate-50 rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase">Assignee</div><div class="font-bold mt-0.5">👤 ${esc(c.assignee)}</div></div>
+        <div class="bg-slate-50 rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase">Expected</div><div class="font-bold mt-0.5 text-brand-600">⏱ ${esc(c.eta)}</div></div>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl border border-brand-200 overflow-hidden">
+      <div class="grad-bg px-5 py-3 flex items-center gap-2"><span class="text-white font-extrabold">✦</span><span class="font-display font-bold text-white text-[14px]">AI Analysis</span><span class="ml-auto text-[11px] font-extrabold bg-white text-brand-700 rounded-full px-2.5 py-1">${c.aiConf}% confident</span></div>
+      <div class="p-5 space-y-3 text-[13px]">
+        <div class="bg-brand-50/60 border border-brand-100 rounded-xl p-3.5"><div class="text-[10.5px] font-extrabold text-brand-600 uppercase">Summary</div><div class="font-medium italic mt-1">"${esc(c.aiSummary)}"</div></div>
+        <div class="grid grid-cols-2 gap-2.5"><div class="bg-slate-50 rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase">Sentiment</div><div class="font-bold mt-0.5">${esc(c.sentiment)}</div></div><div class="bg-slate-50 rounded-xl p-3"><div class="text-[10.5px] font-extrabold text-slate-400 uppercase">Community</div><div class="font-bold mt-0.5">👍 ${c.upvotes} affected</div></div></div>
+      </div>
+    </div>
+    ${isStaff?`
+    <div class="bg-white rounded-2xl border border-slate-200 p-5">
+      <div class="font-display font-bold text-[15px]">✦ AI Copilot for Staff</div>
+      <textarea id="staffReply" rows="3" placeholder="Type update or generate with AI..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-[13.5px] mt-3 resize-none"></textarea>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button onclick="genReply('${c.id}')" class="btn-primary rounded-xl px-4 py-2.5 text-[12.5px] font-bold">✦ Generate Update</button>
+        <button onclick="toast('Summary copied','AI summary copied for call/escalation.','info')" class="btn-ghost rounded-xl px-4 py-2.5 text-[12.5px] font-bold">Copy Summary</button>
+      </div>
+      <div class="text-[11.5px] font-bold text-slate-400 mt-3">STATUS ACTIONS</div>
+      <div class="grid grid-cols-3 gap-2 mt-2">${['Under Review','Assigned','In Progress','Resolved','Escalated','Closed'].map(s=>`<button onclick="changeStatus('${c.id}','${s}')" class="text-[12px] font-bold rounded-xl py-2.5 border transition ${c.status===s?'grad-bg text-white border-transparent':'border-slate-200 hover:border-brand-300 hover:bg-brand-50'}">${s}</button>`).join('')}</div>
+      <div class="text-[11.5px] font-bold text-slate-400 mt-3">REASSIGN</div>
+      <div class="flex gap-2 mt-2"><select id="reassignSel" class="flex-1 border border-slate-200 rounded-xl px-3 py-2.5 text-[13px] font-bold bg-white"><option>Rahul Verma</option><option>Priya Nair</option><option>Suresh Kumar</option><option>Meena Joshi</option><option>Deepak Yadav</option></select><button onclick="reassign('${c.id}')" class="btn-ghost rounded-xl px-4 py-2.5 text-[12.5px] font-bold">Assign</button></div>
+    </div>`:`<div class="bg-white rounded-2xl border border-slate-200 p-5"><div class="font-display font-bold text-[15px]">Need to add info?</div><textarea id="stuNote" rows="2" placeholder="Add a follow-up note or photo description..." class="w-full border border-slate-200 rounded-xl px-4 py-3 text-[13.5px] mt-3 resize-none"></textarea><button onclick="addNote('${c.id}')" class="mt-2.5 btn-primary rounded-xl px-4 py-2.5 text-[12.5px] font-bold w-full">Send Update to Officer</button></div>`}
+    <div class="bg-white rounded-2xl border border-slate-200 p-5">
+      <div class="font-display font-bold text-[15px] mb-4">Timeline</div>
+      ${c.timeline.map((t,i)=>`<div class="timeline-item relative flex gap-3.5 pb-6"><div class="timeline-line"></div><div class="w-9 h-9 rounded-full ${i===c.timeline.length-1?'grad-bg text-white':'bg-slate-100 text-slate-400'} flex items-center justify-center font-extrabold text-[12px] shrink-0 z-10">${i===c.timeline.length-1?'●':'✓'}</div><div class="flex-1"><div class="font-extrabold text-[13px]">${esc(t[0])} <span class="text-slate-400 font-bold">• ${esc(t[1])}</span></div><div class="text-[12.5px] text-slate-600 font-medium mt-0.5">${esc(t[2])}</div></div></div>`).join('')}
+    </div>
+  </div>`;
+}
+function closeDetail(){$('detailPanel').classList.add('translate-x-full');setTimeout(()=>$('detailOverlay').classList.add('hidden'),300);}
+function changeStatus(id,s){const c=state.complaints.find(x=>x.id===id);c.status=s;c.updated='Just now';c.timeline.push([s,'Just now',`Status changed to ${s} by ${state.user.name}.`]);if(s==='Resolved')c.eta='Done';openDetail(id);renderTab();renderNotifs();toast('Status updated',`${id} → ${s}`);}
+function reassign(id){const v=$('reassignSel').value;const c=state.complaints.find(x=>x.id===id);c.assignee=v;if(c.status==='Submitted')c.status='Assigned';c.timeline.push(['Assigned','Just now',`Reassigned to ${v} by ${state.user.name}.`]);openDetail(id);renderTab();toast('Reassigned',`${id} → ${v}`);}
+function genReply(id){
+  const c=state.complaints.find(x=>x.id===id);const ta=$('staffReply');
+  ta.value='';ta.placeholder='✦ AI is drafting...';
+  const draft=`Hi ${c.student.split(' ')[0]}, quick update on ${c.id}: our team has ${c.status==='Resolved'?'completed the fix and verified it on-site':c.status==='In Progress'?'started work on-site and isolated the issue':'reviewed your report and scheduled a visit'}. ${c.status==='Resolved'?'Please confirm everything looks good — your feedback helps us improve.':'Expected resolution: '+c.eta+'. We will keep you posted at each step.'} — ${state.user.name}, ${c.department}`;
+  let i=0;const iv=setInterval(()=>{ta.value=draft.slice(0,++i);if(i>=draft.length){clearInterval(iv);ta.placeholder='Type update or generate with AI...';toast('AI draft ready','Review, edit and send to student.','info');}},12);
+}
+function addNote(id){const v=$('stuNote').value;if(!v.trim()){toast('Empty note','Write something before sending.','warn');return;}const c=state.complaints.find(x=>x.id===id);c.timeline.push(['Student Update','Just now',v]);openDetail(id);toast('Update sent',`Your note was shared with ${c.assignee}.`);}
+
+/* ==================================================================
+   LANDING EXTRAS
+================================================================== */
+const DEMO_TEXTS=[
+  'There is no power in Boys Hostel B Room 112 since evening. The MCB keeps tripping and there is a sparking sound from the board. Very urgent!',
+  'Continuous water leakage from the washroom tap on Block B 1st floor. Water is overflowing onto the corridor and wasting a lot.',
+  'The WiFi in Central Library 2nd floor has been completely down since morning. None of us can access the portal for assignment submissions due today.'
+];
+function setDemoText(i){$('demoInput').value=DEMO_TEXTS[i];runLandingDemo();}
+function runLandingDemo(){
+  const txt=$('demoInput').value.trim();if(txt.length<10){toast('Type a complaint first','Describe any campus issue to test the AI.','warn');return;}
+  const out=$('demoOutput');out.classList.remove('hidden');
+  out.innerHTML=`<div class="relative rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50 to-violet-50 p-4 overflow-hidden"><div class="scan-line"></div><div class="flex items-center gap-2 text-[13px] font-bold text-brand-700"><span class="typing"><span></span><span></span><span></span></span> AI analyzing your complaint...</div></div>`;
+  $('demoBtn').innerHTML='<span class="typing"><span style="background:#fff"></span><span style="background:#fff"></span><span style="background:#fff"></span></span> Analyzing...';
+  setTimeout(()=>{
+    const a=analyzeComplaint(txt.slice(0,60),txt,'');
+    $('demoBtn').innerHTML='✦ Analyze with AI';
+    const urgC=a.urgency==='Critical'?'text-rose-600':a.urgency==='High'?'text-orange-600':a.urgency==='Medium'?'text-amber-600':'text-slate-600';
+    out.innerHTML=`<div class="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 fade-slide">
+      <div class="flex items-center gap-2"><span class="font-display font-bold text-[13.5px]">✦ AI Result</span><span class="ml-auto text-[11px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-0.5">${a.confidence}% confident</span></div>
+      <div class="grid grid-cols-2 gap-2 mt-3 text-[12px]">
+        <div class="bg-white rounded-xl p-2.5 border border-slate-200"><div class="text-slate-400 font-bold text-[10px] uppercase">Category</div><div class="font-extrabold">${catIcon(a.category)} ${a.category}</div></div>
+        <div class="bg-white rounded-xl p-2.5 border border-slate-200"><div class="text-slate-400 font-bold text-[10px] uppercase">Urgency</div><div class="font-extrabold ${urgC}">● ${a.urgency}</div></div>
+        <div class="bg-white rounded-xl p-2.5 border border-slate-200"><div class="text-slate-400 font-bold text-[10px] uppercase">Department</div><div class="font-extrabold">${a.department}</div></div>
+        <div class="bg-white rounded-xl p-2.5 border border-slate-200"><div class="text-slate-400 font-bold text-[10px] uppercase">ETA</div><div class="font-extrabold text-brand-600">${a.eta}</div></div>
+      </div>
+      <div class="mt-2.5 bg-white border border-slate-200 rounded-xl p-2.5 text-[12px] italic text-slate-600">"${esc(a.summary)}"</div>
+      ${a.duplicates.length?`<div class="mt-2 bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-[12px] font-bold text-amber-700">⚠ ${a.duplicates.length} similar report(s) found — would auto-link</div>`:`<div class="mt-2 bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 text-[12px] font-bold text-emerald-700">✓ Unique issue — no duplicates</div>`}
+      <button onclick="goAuth('student')" class="btn-primary w-full rounded-xl py-2.5 font-bold text-[13px] mt-3">File this complaint for real →</button></div>`;
+  },1400);
+}
+function subscribeNL(){const e=$('nlEmail').value;if(!e.includes('@')){toast('Invalid email','Please enter a valid university email.','warn');return;}$('nlEmail').value='';toast('Subscribed!','Welcome to the Campus Ops newsletter.');}
+
+// FAQ
+const FAQS=[
+  ['How accurate is the AI triage?','Our production models achieve 94%+ routing accuracy across 12 complaint categories, with 98% recall on safety-critical issues. Every AI decision shows a confidence score and reasoning, and staff can override in one click — overrides retrain the model.'],
+  ['What happens when a student submits a complaint?','In under 4 seconds, AI categorizes the issue, detects urgency, routes it to the right department and officer, checks for duplicates, generates a summary and predicts resolution time. The student gets live tracking; staff get an AI brief with suggested replies.'],
+  ['Can it detect duplicate complaints?','Yes. A semantic similarity engine compares every new complaint against recent reports. Near-duplicates are auto-linked into a single work order, cutting ticket volume by up to 31% while keeping every reporter updated.'],
+  ['How long does deployment take?','Most universities go live in under 24 hours. We import your departments, buildings and staff roster, configure SSO, and the AI works out-of-the-box — no training data needed from your side.'],
+  ['Is student data secure?','Absolutely. SOC 2 Type II certified, GDPR compliant, with SSO/MFA, role-based access, audit logs and encryption at rest and in transit. Anonymous filing mode hides student identity from department staff.'],
+  ['What integrations are supported?','ERP/SIS (Banner, PeopleSoft), email, SMS/WhatsApp, Slack/Teams, biometric attendance for staff dispatch, and open REST APIs + webhooks for anything custom.'],
+];
+function buildFAQ(){
+  $('faqList').innerHTML=FAQS.map((f,i)=>`<div class="card overflow-hidden reveal"><button onclick="toggleFaq(${i})" class="w-full flex items-center justify-between gap-4 px-6 py-5 text-left"><span class="font-bold text-[15px]">${f[0]}</span><span id="faqIc${i}" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold shrink-0 transition">+</span></button><div id="faqA${i}" class="hidden px-6 pb-5 text-[14px] text-slate-600 leading-relaxed">${f[1]}</div></div>`).join('');
+}
+function toggleFaq(i){const a=$('faqA'+i),ic=$('faqIc'+i);const open=a.classList.contains('hidden');a.classList.toggle('hidden',!open);ic.textContent=open?'−':'+';ic.style.background=open?'#2563EB':'';ic.style.color=open?'#fff':'';}
+function buildDeptGrid(){
+  $('deptGrid').innerHTML=DEPARTMENTS.map(d=>`<div class="card card-hover p-5 text-center reveal cursor-pointer" onclick="goAuth('staff')"><div class="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center text-[24px]" style="background:${d.color}15">${d.icon}</div><div class="font-extrabold text-[13.5px] mt-3">${d.name}</div><div class="text-[11.5px] font-bold text-slate-400 mt-1">${d.open} open • ${d.sla}% SLA</div></div>`).join('');
+}
+
+// Reveal + counters
+function initReveal(){
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}}),{threshold:.08});
+  document.querySelectorAll('#landingView .reveal:not(.visible)').forEach(el=>obs.observe(el));
+}
+function initCounters(){
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const el=e.target,tag=+el.dataset.target;let v=0;const iv=setInterval(()=>{v+=Math.ceil(tag/40);if(v>=tag){v=tag;clearInterval(iv);}el.textContent=v;},30);obs.unobserve(el);}}),{threshold:.5});
+  document.querySelectorAll('.counter').forEach(el=>obs.observe(el));
+}
+window.addEventListener('scroll',()=>{const h=$('mainHeader');if(!h)return;h.style.boxShadow=window.scrollY>10?'0 8px 30px -12px rgba(15,31,61,.15)':'none';});
+
+// Init
+buildFAQ();buildDeptGrid();initReveal();initCounters();pickRole('student');
+</script>
+</body>
+</html>
