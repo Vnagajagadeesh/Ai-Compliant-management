@@ -150,6 +150,11 @@ input:focus,textarea:focus,select:focus{border-color:#2563EB!important;box-shado
         <a href="#faq" class="hover:text-brand-600 transition">FAQ</a>
       </nav>
       <div class="flex items-center gap-3">
+        <button onclick="openVoiceAssistant()" class="hidden sm:flex items-center gap-2 text-[13px] font-bold text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 rounded-xl px-3.5 py-2 transition shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-violet-600 animate-pulse"></span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          Voice Assistant
+        </button>
         <button onclick="toggleCmd(true)" class="hidden md:flex items-center gap-2 text-[13px] font-semibold text-slate-500 border border-slate-200 rounded-xl px-3.5 py-2 hover:border-brand-300 hover:text-brand-600 transition bg-white">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Search <span class="cmd-kbd">⌘K</span>
         </button>
@@ -496,6 +501,11 @@ input:focus,textarea:focus,select:focus{border-color:#2563EB!important;box-shado
           </button>
           <button onclick="setTab('new')" id="topNewBtn" class="md:hidden btn-primary rounded-xl px-4 py-2.5 text-[13px] font-bold">+ New</button>
           <div class="ml-auto flex items-center gap-2.5">
+            <button onclick="openVoiceAssistant()" class="flex items-center gap-2 text-[13px] font-bold text-slate-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 rounded-xl px-3.5 py-2.5 transition shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-violet-600 animate-pulse"></span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              <span class="hidden sm:inline">Voice Assistant</span>
+            </button>
             <button onclick="setTab('new')" id="topNewBtn2" class="hidden md:flex btn-primary rounded-xl px-5 py-2.5 text-[13.5px] font-bold items-center gap-2"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg> New Complaint</button>
             <div class="relative">
               <button onclick="document.getElementById('notifDrop').classList.toggle('hidden')" class="relative p-2.5 rounded-xl border border-slate-200 hover:border-brand-300 hover:bg-brand-50 transition">
@@ -1335,5 +1345,7 @@ window.addEventListener('scroll',()=>{const h=$('mainHeader');if(!h)return;h.sty
 // Init
 buildFAQ();buildDeptGrid();initReveal();initCounters();pickRole('student');
 </script>
+<script src="design-arena-ui/js/voice-agent-service.js"></script>
+<script src="design-arena-ui/js/voice-call-modal.js"></script>
 </body>
 </html>
