@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import get_settings
 from app.db.database import create_tables
 from app.api.email_routes import router as email_router
+from app.api.complaint_routes import router as complaint_router
 
 # Configure logging — NEVER log credentials
 logging.basicConfig(
@@ -50,7 +51,7 @@ app = FastAPI(
 # CORS — adjust origins for production
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,6 +59,7 @@ app.add_middleware(
 
 # Register routes
 app.include_router(email_router)
+app.include_router(complaint_router)
 
 
 @app.get("/api/health")

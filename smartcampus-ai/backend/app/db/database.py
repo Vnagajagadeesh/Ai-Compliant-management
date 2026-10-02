@@ -39,4 +39,5 @@ def get_db():
 
 def create_tables():
     """Create all tables defined by models inheriting from Base."""
+    import app.models  # noqa: F401 — register all models with Base
     Base.metadata.create_all(bind=engine)
